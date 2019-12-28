@@ -17,7 +17,7 @@ namespace pandora_ds
 	    {
 		for (size_t cur = 0; cur < len-1; cur++)
 		{
-		    if (arr[cur] < arr[cur+1])
+		    if (arr[cur+1] < arr[cur])
 			std::swap(arr[cur], arr[cur+1]);
 		    res++;
 		}
