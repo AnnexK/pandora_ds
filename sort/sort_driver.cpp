@@ -10,8 +10,24 @@
 #include "bubblesort.hpp"
 #include "mergesort.hpp"
 #include "heapsort.hpp"
+#include "insertionsort.hpp"
+#include "selectionsort.hpp"
+#include "quicksort.hpp"
 
 using namespace pandora_ds;
+
+// тип сортируемых данных
+using T = double;
+
+// пример класса-выбиральщика для Quicksort
+// (первый эл-т массива)
+class FirstSelector : public Quicksort<T>::IPivotSelector
+{
+    virtual int index(int l, int r) override
+    {
+	return l;
+    }
+};
 
 int main()
 {
@@ -45,9 +61,11 @@ int main()
 
     ifp.close();
 
-    /* вместо Heapsort подставить имя класса сортировщика
-       (возможно, нужно будет также поменять арг. шаблона) */
-    ISorter<double> *sorter = new Heapsort<double>();
+    /* здесь добавить класс-выбиральщик для qsort
+       (если стандартный RandomPivot не подходит) */
+    // Quicksort<T>::selector_ptr sel = std::make_shared<ClassName>(Args);
+    /* вместо Heapsort подставить имя класса сортировщика */
+    ISorter<T> *sorter = new Selectionsort<T>();
     unsigned int cmp = sorter->sort(arr, size);
     delete sorter;
 
