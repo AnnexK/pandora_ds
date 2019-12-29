@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstddef>
 #include "interface.hpp"
 
 namespace pandora_ds
@@ -10,12 +9,12 @@ namespace pandora_ds
     {
     public:
 	/* реализация интерфейса */
-	virtual unsigned int sort(T* arr, size_t size) override
+	virtual unsigned int sort(T* arr, int size) override
 	{
 	    unsigned int res = 0;
-	    for (size_t len = size; len; len--)
+	    for (int len = size; len; len--)
 	    {
-		for (size_t cur = 0; cur < len-1; cur++)
+		for (int cur = 0; cur < len-1; cur++)
 		{
 		    if (arr[cur+1] < arr[cur])
 			std::swap(arr[cur], arr[cur+1]);

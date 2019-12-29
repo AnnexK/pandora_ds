@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstddef>
-
 namespace pandora_ds
 {
     /* Класс ISorter<T> предоставляет интерфейс,
@@ -18,6 +16,6 @@ namespace pandora_ds
 	virtual ~ISorter() = default;
 
 	/* интерфейс класса */
-	virtual unsigned int sort(T *, size_t) = 0;
+	virtual unsigned int sort(T *, int) = 0;
     };
 }

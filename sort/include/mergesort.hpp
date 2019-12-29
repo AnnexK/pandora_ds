@@ -10,23 +10,23 @@ namespace pandora_ds
     class Mergesort : public ISorter<T>
     {
     public:
-	virtual unsigned int sort(T* arr, size_t n) override
+	virtual unsigned int sort(T* arr, int n) override
 	{
 	    unsigned int res = 0;
 
 	    /* буфер для слияний */
 	    T* buf = new T[n];
 	    /* сначала сливаем подмассивы длиной 1 */
-	    size_t size = 1;
+	    int size = 1;
 
 	    while (size < n)
 	    {
-		size_t left = 0;
+		int left = 0;
 		while (left < n)
 		{
-		    size_t mid = std::min(left + size - 1, n-1);
+		    int mid = std::min(left + size - 1, n-1);
 		    /* если последний подмассив короче */
-		    size_t right = std::min(mid + size, n-1);
+		    int right = std::min(mid + size, n-1);
 		    res += merge(arr, buf, left, mid, right);
 		    /* перемещаемся к следующей паре подмассивов */
 		    left += 2*size;
@@ -43,9 +43,9 @@ namespace pandora_ds
 	   (отсортированных) подмассивов A[l..m] и A[m+1..r],
 	   используя буфер B 
 	   возвращает кол-во сравнений */
-        unsigned int merge(T* A, T* B, size_t l, size_t m, size_t r)
+        unsigned int merge(T* A, T* B, int l, int m, int r)
 	{
-	    size_t buf_cur = 0, left_cur = l, right_cur = m+1;
+	    int buf_cur = 0, left_cur = l, right_cur = m+1;
 	    unsigned int cmp = 0;
 
 	    while (left_cur <= m && right_cur <= r)
@@ -64,7 +64,7 @@ namespace pandora_ds
 		B[buf_cur++] = A[right_cur++];
 	    }
 
-	    for (size_t i = l; i <= r; i++)
+	    for (int i = l; i <= r; i++)
 	    {
 		A[i] = B[i-l];
 	    }

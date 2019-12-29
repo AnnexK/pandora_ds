@@ -10,11 +10,11 @@ namespace pandora_ds
     class Heapsort : public ISorter<T>
     {
     public:
-	virtual unsigned int sort(T* arr, size_t n) override
+	virtual unsigned int sort(T* arr, int n) override
 	{
 	    unsigned int cmp = build_heap(arr, n);
 
-	    size_t size = n;
+	    int size = n;
 	    while (size)
 	    {
 		std::swap(arr[0], arr[--size]);
@@ -24,21 +24,19 @@ namespace pandora_ds
 	}
 
     private:
-	unsigned int build_heap(T* arr, size_t n)
+	unsigned int build_heap(T* arr, int n)
 	{
 	    unsigned int cmp = 0;
-	    // грязно, конечно, но кто будет в здравом уме
-	    // сортировать в ОЗУ массив длиной 18 KKKKKK записей?
-	    for (size_t i = n / 2 - 1; i != (size_t)-1; i--)
+	    for (int i = n / 2 - 1; i != -1; i--)
 		cmp += heapify(arr, i, n);
 	    return cmp;
 	}
 
-	unsigned int heapify(T* arr, size_t rt, size_t n)
+	unsigned int heapify(T* arr, int rt, int n)
 	{
 	    unsigned int cmp = 0;
-	    size_t left = 2*rt + 1, right = 2*rt + 2;
-	    size_t largest;
+	    int left = 2*rt + 1, right = 2*rt + 2;
+	    int largest;
 
 	    if (left < n)
 	    {
