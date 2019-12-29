@@ -7,3 +7,5 @@ __pycache__
 
 sort/*.txt
 sort/driver
+/sort/.sconsign.dblite
+/sort/sort_driver.o
