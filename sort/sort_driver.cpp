@@ -13,6 +13,7 @@
 #include "insertionsort.hpp"
 #include "selectionsort.hpp"
 #include "quicksort.hpp"
+#include "shellsort.hpp"
 
 using namespace pandora_ds;
 
@@ -64,6 +65,12 @@ int main()
     /* здесь добавить класс-выбиральщик для qsort
        (если стандартный RandomPivot не подходит) */
     // Quicksort<T>::selector_ptr sel = std::make_shared<ClassName>(Args);
+
+
+    /* здесь добавить класс-фабрику для shellsort
+       (если стандартный DefaultShellGenerator не подходит) */
+    // Shellsort<T>::fac_ptr fac = std::make_shared<ClassName>();
+    
     /* вместо Heapsort подставить имя класса сортировщика */
     ISorter<T> *sorter = new Heapsort<T>();
     unsigned int cmp = sorter->sort(arr, size);
