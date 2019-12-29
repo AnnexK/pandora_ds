@@ -65,7 +65,7 @@ int main()
        (если стандартный RandomPivot не подходит) */
     // Quicksort<T>::selector_ptr sel = std::make_shared<ClassName>(Args);
     /* вместо Heapsort подставить имя класса сортировщика */
-    ISorter<T> *sorter = new Selectionsort<T>();
+    ISorter<T> *sorter = new Heapsort<T>();
     unsigned int cmp = sorter->sort(arr, size);
     delete sorter;
 
@@ -75,6 +75,7 @@ int main()
 	ofp << arr[i] << ' ';
     }
 
+    ofp << std::endl;
     ofp.close();
 
     /* кол-во сравнений на экране */
