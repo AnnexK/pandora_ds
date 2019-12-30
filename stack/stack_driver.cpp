@@ -18,17 +18,13 @@ int main()
     
 	/* здесь писать решение задачи */
 	std::cout << "Solution Placeholder" << std::endl;
-	for (int i = 0; i < 129; i++)
-	{
-	    stk->push('d');
-	    std::cout << stk->peek() << std::endl;
-	}
     
 	/* деструкторы умных указателей вызовут деструкторы стеков,
 	   которые освободят выделенную память */
     }
     catch (const std::exception& e)
     {
+	// здесь обработка ошибок
 	std::cerr << e.what() << std::endl;
     }
     return 0;
