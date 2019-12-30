@@ -6,14 +6,18 @@
 
 namespace pandora_ds
 {
+    /* Стек с "применением динамической памяти" */
     template <class T>
     class LinkedStack : public IStack<T>
     {
     private:
+	/* Узел стека */
 	template <class U>
 	struct LinkedStackNode
 	{
+	    // данные
 	    U data;
+	    // след. узел стека
 	    LinkedStackNode<U>* next;
 
 	    LinkedStackNode(U data, LinkedStackNode<U>* next)
@@ -33,6 +37,7 @@ namespace pandora_ds
 	
 	virtual ~LinkedStack() override
 	{
+	    /* удаляем эл-ты стека, извлекая их из стека */
 	    while (!empty())
 		pop();
 	}
