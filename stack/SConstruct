@@ -1,4 +1,4 @@
 env = Environment(CPPPATH='#include', CCFLAGS='-g -Wall')
 
-env.Program('driver', 'stack_driver.cpp')
+env.Program('driver', 'driver.c')
 
