@@ -46,7 +46,7 @@ int main(void)
 
     fclose(fp);
     
-    int cmps = sort(arr, size, sizeof(double), double_compare);
+    unsigned int cmps = sort(arr, size, sizeof(double), double_compare);
     
     fp = fopen("result.txt", "w");
     writeFile(fp, arr, size);
