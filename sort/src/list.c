@@ -50,6 +50,11 @@ void dest_list(list *l)
     free(l);
 }
 
+node *first(list *l)
+{
+    return l->head;
+}
+
 T *data(node *n)
 {
     return &(n->data);

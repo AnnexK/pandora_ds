@@ -18,7 +18,6 @@ typedef struct _list list;
 list *make_list(void);
 void dest_list(list *);
 
-node *first(list *);
 T *data(node *);
 node *next(node *);
 
