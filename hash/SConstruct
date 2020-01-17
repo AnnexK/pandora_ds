@@ -1,4 +1,6 @@
 env = Environment(CPPPATH='#include', CCFLAGS='-g -Wall')
 
-env.Program('chain', ['driver.c', 'src/chain.c', 'src/list.c', 'src/pair.c'])
-env.Program('linear', ['driver.c', 'src/linear.c', 'src/pair.c'])
+env.Program('chain', ['chaindrv.c', 'src/chain.c', 'src/list.c', 'src/pair.c'])
+env.Program('linear', ['closedrv.c', 'src/linear.c', 'src/pair.c'])
+env.Program('quad', ['closedrv.c', 'src/quad.c', 'src/pair.c'])
+env.Program('dhash', ['dhashdrv.c', 'src/dhash.c', 'src/pair.c'])
