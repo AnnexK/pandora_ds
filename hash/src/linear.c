@@ -1,6 +1,6 @@
 #include "hash.h"
 #include "pair.h"
-#include "linear.h"
+#include "closed.h"
 
 #include <stdlib.h>
 #include <stdio.h>
