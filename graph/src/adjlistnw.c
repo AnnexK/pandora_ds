@@ -70,6 +70,11 @@ void dest_graph(graph *g)
     free(g);
 }
 
+size_t vertices(graph *g)
+{
+    return g->v;
+}
+
 // data is ignored
 int add_edge(graph *g, size_t s, size_t e, int data)
 {

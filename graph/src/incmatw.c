@@ -46,6 +46,11 @@ void dest_graph(graph *g)
     free(g);
 }
 
+size_t vertices(graph *g)
+{
+    return g->v;
+}
+
 int *edge_lookup(graph *g, size_t s, size_t e)
 {
     int type = g->directed && s != e ? -1 : 1;
