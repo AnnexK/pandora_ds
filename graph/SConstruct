@@ -1,0 +1,3 @@
+env = Environment(CPPPATH='#include', CCFLAGS='-Wall -g')
+
+env.Program('iotest', ['iotest.c', 'src/iograph.c', 'src/adjmatw.c'])
