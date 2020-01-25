@@ -17,6 +17,7 @@ struct _graph
     size_t edge_current;
     unsigned char directed;
 };
+const int no_edge = 0;
 
 graph *make_graph(size_t v_amt, unsigned char dir)
 {
@@ -47,6 +48,11 @@ size_t vertices(graph *g)
     return g->v;
 }
 
+unsigned char directed(graph *g)
+{
+    return g->directed;
+}
+
 int *edge_lookup(graph *g, size_t s, size_t e)
 {
     int type = g->directed && s != e ? -1 : 1;
@@ -58,7 +64,7 @@ int *edge_lookup(graph *g, size_t s, size_t e)
     return NULL;
 }
 
-// data is weight
+// data is ignored
 int add_edge(graph *g, size_t s, size_t e, int data)
 {
     if (g->v <= s || g->v <= e)
@@ -101,7 +107,7 @@ int add_edge(graph *g, size_t s, size_t e, int data)
 
 int get_edge(graph *g, size_t s, size_t e)
 {
-    return g->v > s && g->v > e && edge_lookup(g, s, e);
+    return g->v > s && g->v > e && edge_lookup(g, s, e) ? 1 : no_edge;
 }
 
 int remove_edge(graph *g, size_t s, size_t e)
@@ -130,7 +136,7 @@ struct _iterator
 {
     int *mat; // матрица инцидентности
     size_t svert; // нач. вершина
-    size_t evert; // кон. вершина (задается при вычислении)
+    size_t evert; // кон. вершина (задается при вычислении it_next)
     size_t cur; // номер текущего ребра
     size_t vsize; // количество вершин
     size_t esize; // количество ребер
@@ -143,6 +149,7 @@ size_t get_end(int *edge, size_t l, size_t v)
 	if (i != v && edge[i])
 	    return i;
     }
+    // ребро есть петля -- возвращаем саму вершину
     return v;
 }
 
@@ -163,7 +170,7 @@ iterator *make_iter(graph *g, size_t v)
     it->esize = g->edge_current;
     it->vsize = g->v;
     
-    if (it->mat[v])
+    if (it->mat[v] == 1)
     {
 	it->evert = get_end(it->mat, g->v, v);
 	return it;
@@ -217,7 +224,7 @@ int it_data(iterator *it)
     if (!it)
     {
 	fprintf(stderr, "iterator exhausted\n");
-	return 0;
+	return no_edge;
     }
 
     return 1;

@@ -14,6 +14,7 @@ struct _graph
     size_t v;
     unsigned char directed;
 };
+const int no_edge = INT_MAX;
 
 typedef struct _listdata
 {
@@ -77,6 +78,11 @@ size_t vertices(graph *g)
     return g->v;
 }
 
+unsigned char directed(graph *g)
+{
+    return g->directed;
+}
+
 // data is weight
 int add_edge(graph *g, size_t s, size_t e, int d)
 {
@@ -86,18 +92,26 @@ int add_edge(graph *g, size_t s, size_t e, int d)
 	return EDGE_NOT_FOUND;
     }
     node *edge = search(g->adjlists[s], &e);
-
     if (edge)
     {
 	// получить данные из найденного эл-та списка,
 	// привести к типу указателя на данные списка
 	// и записать новый вес
 	((listdata *)data(edge))->weight = d;
+	if (!g->directed)
+	{
+	    ((listdata *)data(search(g->adjlists[e], &s)))->weight = d;
+	}
     }
     else
     {
 	listdata key = {e, d};
 	insert(g->adjlists[s], NULL, &key);
+	if (!g->directed)
+	{
+	    key.v = s;
+	    insert(g->adjlists[e], NULL, &key);
+	}
     }
     return SUCCESS;
 }
@@ -105,7 +119,7 @@ int add_edge(graph *g, size_t s, size_t e, int d)
 int get_edge(graph *g, size_t s, size_t e)
 {
     node *edge;
-    return g->v > s && g->v > e && (edge = search(g->adjlists[s], &e)) ? ((listdata *)data(edge))->weight : INT_MAX;
+    return g->v > s && g->v > e && (edge = search(g->adjlists[s], &e)) ? ((listdata *)data(edge))->weight : no_edge;
 }
 
 int remove_edge(graph *g, size_t s, size_t e)
@@ -117,6 +131,10 @@ int remove_edge(graph *g, size_t s, size_t e)
 	return EDGE_NOT_FOUND;
     }
     delete(g->adjlists[s], edge);
+    if (!g->directed)
+    {
+	delete(g->adjlists[e], search(g->adjlists[e], &s));
+    }
     return SUCCESS;
 }
 
@@ -182,7 +200,7 @@ int it_data(iterator *it)
     if (!it)
     {
 	fprintf(stderr, "iterator exhausted\n");
-	return INT_MAX;
+	return no_edge;
     }
     listdata *d = data(it->cur);
     return d->weight;

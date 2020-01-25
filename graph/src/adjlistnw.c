@@ -13,6 +13,7 @@ struct _graph
     size_t v;
     unsigned char directed;
 };
+const int no_edge = 0;
 
 typedef struct _listdata
 {
@@ -75,6 +76,11 @@ size_t vertices(graph *g)
     return g->v;
 }
 
+unsigned char directed(graph *g)
+{
+    return g->directed;
+}
+
 // data is ignored
 int add_edge(graph *g, size_t s, size_t e, int data)
 {
@@ -89,13 +95,18 @@ int add_edge(graph *g, size_t s, size_t e, int data)
     {
 	listdata key = {e};
 	insert(g->adjlists[s], NULL, &key);
+	if (!g->directed)
+	{
+	    key.v = s;
+	    insert(g->adjlists[e], NULL, &key);
+	}
     }
     return SUCCESS;
 }
 
 int get_edge(graph *g, size_t s, size_t e)
 {
-    return g->v > s && g->v > e && search(g->adjlists[s], &e);
+    return g->v > s && g->v > e && search(g->adjlists[s], &e) ? 1 : no_edge;
 }
 
 int remove_edge(graph *g, size_t s, size_t e)
@@ -107,6 +118,10 @@ int remove_edge(graph *g, size_t s, size_t e)
 	return EDGE_NOT_FOUND;
     }
     delete(g->adjlists[s], edge);
+    if (!g->directed)
+    {
+	delete(g->adjlists[e], search(g->adjlists[e], &s));
+    }
     return SUCCESS;
 }
 
@@ -172,7 +187,7 @@ int it_data(iterator *it)
     if (!it)
     {
 	fprintf(stderr, "iterator exhausted\n");
-	return 0;
+	return no_edge;
     }
     return 1;
 }

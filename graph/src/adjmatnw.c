@@ -24,7 +24,12 @@ graph *make_graph(size_t v_amt, unsigned char dir)
 	return NULL;
     }
 
-    g->mat = calloc(v_amt * v_amt, sizeof(int));
+    g->mat = malloc(v_amt * v_amt * sizeof(int));
+    for (size_t i = 0; i < v_amt*v_amt; i++)
+    {
+	g->mat[i] = no_edge;
+    }
+    
     if (!g->mat)
     {
 	fprintf(stderr, "could not allocate matrix\n");
@@ -46,6 +51,11 @@ void dest_graph(graph *g)
 size_t vertices(graph *g)
 {
     return g->v;
+}
+
+unsigned char directed(graph *g)
+{
+    return g->directed;
 }
 
 // data ignored
@@ -73,10 +83,10 @@ int remove_edge(graph *g, size_t s, size_t e)
 	return EDGE_NOT_FOUND;
     }
 
-    g->mat[s*g->v+e] = 0;
+    g->mat[s*g->v+e] = no_edge;
     if (!g->directed)
     {
-	g->mat[e*g->v+s] = 0;
+	g->mat[e*g->v+s] = no_edge;
     }
     return SUCCESS;
 }
@@ -85,8 +95,7 @@ int get_edge(graph *g, size_t s, size_t e)
 {
     if (g->v <= s || g->v <= e)
     {
-	// fprintf(stderr, "no edge in graph\n");
-	return 0;
+	return no_edge;
     }
 
     return g->mat[s*g->v+e];
@@ -115,7 +124,7 @@ iterator *make_iter(graph *g, size_t v)
     it->size = g->v;
     it->cur = 0;
 
-    return *(it->row) ? it : it_next(it);
+    return *(it->row) != no_edge ? it : it_next(it);
 }
 
 iterator *it_next(iterator *it)
@@ -123,7 +132,7 @@ iterator *it_next(iterator *it)
     if (!it) return NULL;
     for (size_t i = it->cur+1; i < it->size; i++)
     {
-	if (it->row[i])
+	if (it->row[i] != no_edge)
 	{
 	    it->cur = i;
 	    return it;
@@ -158,7 +167,7 @@ int it_data(iterator *it)
     if (!it)
     {
 	fprintf(stderr, "iterator exhausted\n");
-	return 0;
+	return no_edge;
     }
     return 1;
 }

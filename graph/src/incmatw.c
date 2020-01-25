@@ -21,6 +21,7 @@ struct _graph
     size_t edge_current;
     unsigned char directed;
 };
+const int no_edge = INT_MAX;
 
 graph *make_graph(size_t v_amt, unsigned char dir)
 {
@@ -49,6 +50,11 @@ void dest_graph(graph *g)
 size_t vertices(graph *g)
 {
     return g->v;
+}
+
+unsigned char directed(graph *g)
+{
+    return g->directed;
 }
 
 int *edge_lookup(graph *g, size_t s, size_t e)
@@ -107,7 +113,7 @@ int add_edge(graph *g, size_t s, size_t e, int data)
 int get_edge(graph *g, size_t s, size_t e)
 {
     int *edge;
-    return g->v > s && g->v > e && (edge = edge_lookup(g, s, e)) ? edge[g->v] : INT_MAX;
+    return g->v > s && g->v > e && (edge = edge_lookup(g, s, e)) ? edge[g->v] : no_edge;
 }
 
 int remove_edge(graph *g, size_t s, size_t e)
@@ -169,7 +175,7 @@ iterator *make_iter(graph *g, size_t v)
     it->esize = g->edge_current;
     it->vsize = g->v;
     
-    if (it->mat[v])
+    if (it->mat[v] == 1)
     {
 	it->evert = get_end(it->mat, g->v, v);
 	return it;
@@ -223,7 +229,7 @@ int it_data(iterator *it)
     if (!it)
     {
 	fprintf(stderr, "iterator exhausted\n");
-	return INT_MAX;
+	return no_edge;
     }
 
     return it->mat[it->cur*(it->vsize+1)+it->vsize];
