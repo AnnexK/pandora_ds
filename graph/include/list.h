@@ -6,8 +6,7 @@
 #define NODE_NOT_IN_LIST 2
 
 #define CHECK_BELONG
-
-#include "edge.h"
+#include <stddef.h>
 
 struct _node;
 struct _list;
