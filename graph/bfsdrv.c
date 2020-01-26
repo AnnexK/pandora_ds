@@ -58,16 +58,14 @@ int qempty(queue *q)
     return q->head == q->tail;
 }
 
-size_t *bfs(graph *g, size_t v)
+void bfs(graph *g, size_t v)
 {
     if (vertices(g) <= v)
     {
 	fprintf(stderr, "no vertex in graph\n");
-	return NULL;
+	return;
     }
 
-    size_t *ret = malloc(sizeof(size_t)*(vertices(g)+1));
-    size_t ret_idx = 0;
     size_t *visited = calloc(sizeof(size_t), vertices(g));
     visited[v] = 1;
     
@@ -77,7 +75,8 @@ size_t *bfs(graph *g, size_t v)
     while (!qempty(q))
     {
 	size_t w = dequeue(q);
-	ret[ret_idx++] = w;
+	/* вывод вершины */
+        printf("%lu ", w);
 	for (iterator *it = make_iter(g, w); it; it = it_next(it))
 	{
 	    size_t y = it_end(it);
@@ -88,10 +87,9 @@ size_t *bfs(graph *g, size_t v)
 	    }
 	}
     }
-    ret[ret_idx] = vertices(g);
     dest_queue(q);
     free(visited);
-    return ret;
+    putchar('\n');
 }
 
 int main(int argc, char **argv)
@@ -116,15 +114,8 @@ int main(int argc, char **argv)
     }
     fclose(fp);
     
-    size_t *visited_order = bfs(g, 0);
+    bfs(g, 0);
 
-    size_t i = 0;
-    while (visited_order[i] != vertices(g))
-    {
-	printf("%lu ", visited_order[i++]);
-    }
-    putchar('\n');
-    free(visited_order);
     dest_graph(g);
 
     return 0;

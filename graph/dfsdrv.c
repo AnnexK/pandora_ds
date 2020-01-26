@@ -5,38 +5,34 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-size_t *_dfs(graph *g, size_t v, size_t *visited, size_t *ret)
+void _dfs(graph *g, size_t v, size_t *visited)
 {
     visited[v] = 1;
-    *ret = v;
-
+    printf("%lu ", v);
     for (iterator *it = make_iter(g, v); it; it = it_next(it))
     {
 	size_t end = it_end(it);
 	if (!visited[end])
 	{
-	    ret = _dfs(g, end, visited, ret+1);
+	    _dfs(g, end, visited);
 	}
     }
-    return ret;
 }
 
-size_t *dfs(graph *g, size_t v)
+void dfs(graph *g, size_t v)
 {
     if (vertices(g) <= v)
     {
 	fprintf(stderr, "no vertex in graph\n");
-	return NULL;
+	return;
     }
     
-    size_t *ret = malloc(sizeof(size_t) * (vertices(g)+1));
     size_t *visited = calloc(sizeof(size_t), vertices(g));
 
-    size_t *last_vert = _dfs(g, v, visited, ret)+1;
-    *last_vert = vertices(g);
+    _dfs(g, v, visited);
     
     free(visited);
-    return ret;
+    putchar('\n');
 }
 
 
@@ -62,15 +58,8 @@ int main(int argc, char **argv)
     }
     fclose(fp);
     
-    size_t *visited_order = dfs(g, 0);
+    dfs(g, 0);
 
-    size_t i = 0;
-    while (visited_order[i] != vertices(g))
-    {
-	printf("%lu ", visited_order[i++]);
-    }
-    putchar('\n');
-    free(visited_order);
     dest_graph(g);
 
     return 0;
