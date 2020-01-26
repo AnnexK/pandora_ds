@@ -62,6 +62,26 @@ graph *make_graph(size_t v_amt, unsigned char dir)
     return g;
 }
 
+graph *copy_graph(graph *g)
+{
+    if (!g) return NULL;
+    graph *ret = make_graph(vertices(g), directed(g));
+    if (!ret)
+    {
+	fprintf(stderr, "could not create graph struct\n");
+	return NULL;
+    }
+
+    for (size_t i = 0; i < vertices(g); i++)
+    {
+	for (node *n = first(g->adjlists[i]); n; n = next(n))
+	{
+	    insert(ret->adjlists[i], last(ret->adjlists[i]), data(n));
+	}
+    }
+    return ret;
+}
+
 void dest_graph(graph *g)
 {
     for (size_t i = 0; i < g->v; i++)

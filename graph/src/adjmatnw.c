@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "graph.h"
 #include "iterator.h"
@@ -14,6 +15,7 @@ struct _graph
     size_t v;
     unsigned char directed;
 };
+const int no_edge = 0;
 
 graph *make_graph(size_t v_amt, unsigned char dir)
 {
@@ -40,6 +42,20 @@ graph *make_graph(size_t v_amt, unsigned char dir)
     g->v = v_amt;
     g->directed = dir;
     return g;
+}
+
+graph *copy_graph(graph *g)
+{
+    if (!g) return NULL;
+    graph *ret = make_graph(vertices(g), directed(g));
+    if (!ret)
+    {
+	fprintf(stderr, "could not create graph struct\n");
+	return NULL;
+    }
+
+    memcpy(ret->mat, g->mat, vertices(g)*vertices(g)*sizeof(int));
+    return ret;
 }
 
 void dest_graph(graph *g)

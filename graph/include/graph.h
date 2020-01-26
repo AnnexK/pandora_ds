@@ -18,6 +18,7 @@ typedef struct _graph graph;
 extern const int no_edge;
 
 graph *make_graph(size_t, unsigned char);
+graph *copy_graph(graph *);
 void dest_graph(graph *);
 
 size_t vertices(graph *);

@@ -41,6 +41,35 @@ graph *make_graph(size_t v_amt, unsigned char dir)
     return g;
 }
 
+
+graph *copy_graph(graph *g)
+{
+    if (!g) return NULL;
+    graph *ret = malloc(sizeof(graph));
+    if (!ret)
+    {
+	fprintf(stderr, "could not create graph struct\n");
+	return NULL;
+    }
+
+    size_t matsize = g->edge_capacity*(g->v+1)*sizeof(int);
+    ret->mat = (g->mat ? malloc(matsize) : NULL);
+    if (g->mat && !ret->mat)
+    {
+	fprintf(stderr, "could not allocate matrix\n");
+	free(ret);
+	return NULL;
+    }
+    
+    ret->v = g->v;
+    ret->directed = g->directed;
+    ret->edge_capacity = g->edge_capacity;
+    ret->edge_current = g->edge_current;
+
+    if (g->mat) memcpy(ret->mat, g->mat, matsize);
+    return ret;
+}
+
 void dest_graph(graph *g)
 {
     free(g->mat);
@@ -85,7 +114,7 @@ int add_edge(graph *g, size_t s, size_t e, int data)
     {
 	if (g->edge_capacity == g->edge_current)
 	{
-	    int *tmp = realloc(g->mat, (g->edge_current+ALLOC_SIZE)*(g->v+1));
+	    int *tmp = realloc(g->mat, (g->edge_current+ALLOC_SIZE)*(g->v+1)*sizeof(int));
 	    if (!tmp)
 	    {
 		fprintf(stderr, "could not reallocate incidence matrix\n");
