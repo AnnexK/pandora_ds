@@ -55,7 +55,7 @@ void sort(double *arr, size_t size)
 	size_t key = (size_t)(m * BUCKET_AMOUNT);
 	if (key == BUCKET_AMOUNT)
 	    key--;
-	insert(buckets[key], NULL, arr[i]);
+	insert(buckets[key], last(buckets[key]), arr[i]);
     }
 
     for (size_t i = 0; i < BUCKET_AMOUNT; i++)

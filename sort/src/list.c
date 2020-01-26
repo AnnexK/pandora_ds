@@ -12,6 +12,7 @@ struct _node
 struct _list
 {
     struct _node *head;
+    struct _node *tail;
 };
 
 int belongs(list *l, node *n)
@@ -53,6 +54,11 @@ void dest_list(list *l)
 node *first(list *l)
 {
     return l->head;
+}
+
+node *last(list *l)
+{
+    return l->tail;
 }
 
 T *data(node *n)
@@ -98,6 +104,11 @@ int insert(list *l, node *n, T d)
 	new->next = l->head;
 	l->head = new;
     }
+    if (n == l->tail)
+    {
+	l->tail = new;
+    }
+    
     return SUCCESS;
 }
 
@@ -126,6 +137,10 @@ int delete(list *l, node *n)
     if (n == l->head)
     {
 	l->head = l->head->next;
+	if (!l->head)
+	{
+	    l->tail = NULL;
+	}	
     }
     else
     {
@@ -133,6 +148,10 @@ int delete(list *l, node *n)
 	while (p->next != n)
 	    p = p->next;
 	p->next = n->next;
+	if (n == l->tail)
+	{
+	    l->tail = p;
+	}	
     }
     free(n);
     return SUCCESS;
