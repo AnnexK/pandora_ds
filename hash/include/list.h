@@ -21,6 +21,7 @@ list *make_list(void);
 void dest_list(list *);
 
 node *first(list *);
+node *last(list *);
 T *data(node *);
 node *next(node *);
 

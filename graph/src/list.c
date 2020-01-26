@@ -7,7 +7,6 @@
 // список модифицирован для использования с любыми примитивными типами
 // или составными типами, состоящими из примитивных типов
 
-
 struct _node
 {
     void *data;
@@ -17,6 +16,7 @@ struct _node
 struct _list
 {
     struct _node *head;
+    struct _node *tail;
     size_t ssize;
     cmpf f;
 };
@@ -41,7 +41,7 @@ list *make_list(size_t ssize, cmpf f)
     }
 
     ret->ssize = ssize;
-    ret->head = NULL;
+    ret->head = ret->tail = NULL;
     ret->f = f;
     
     return ret;
@@ -63,6 +63,11 @@ void dest_list(list *l)
 node *first(list *l)
 {
     return l->head;
+}
+
+node *last(list *l)
+{
+    return l->tail;
 }
 
 void *data(node *n)
@@ -116,6 +121,10 @@ int insert(list *l, node *n, void *d)
 	new->next = l->head;
 	l->head = new;
     }
+    if (n == l->tail)
+    {
+	l->tail = new;
+    }
     return SUCCESS;
 }
 
@@ -142,9 +151,14 @@ int delete(list *l, node *n)
     }
 #endif
 
+    // p -- узел списка, находящийся перед n    
     if (n == l->head)
     {
 	l->head = l->head->next;
+	if (!l->head)
+	{
+	    l->tail = NULL;
+	}
     }
     else
     {
@@ -152,6 +166,10 @@ int delete(list *l, node *n)
 	while (p->next != n)
 	    p = p->next;
 	p->next = n->next;
+	if (n == l->tail)
+	{
+	    l->tail = p;
+	}
     }
     free(n->data);
     free(n);

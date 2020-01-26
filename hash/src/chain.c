@@ -64,7 +64,7 @@ int insert(dictionary *dct, K key, V val)
     else
     {
 	pair new = { key, val };
-	linsert(dct->lists[h], NULL, new);
+	linsert(dct->lists[h], last(dct->lists[h]), new);
     }
 
     return 0;

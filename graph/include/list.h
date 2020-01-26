@@ -20,6 +20,7 @@ list *make_list(size_t, cmpf);
 void dest_list(list *);
 
 node *first(list *);
+node *last(list *);
 void *data(node *);
 node *next(node *);
 
