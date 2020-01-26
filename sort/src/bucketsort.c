@@ -60,7 +60,6 @@ void sort(double *arr, size_t size)
 
     for (size_t i = 0; i < BUCKET_AMOUNT; i++)
     {
-	map(buckets[i], print);
 	lsort(buckets[i]);
     }
 

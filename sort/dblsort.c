@@ -21,7 +21,7 @@ int main(void)
 {
     srand(time(NULL));
 
-    size_t size = 0;
+    size_t size = 200;
     double min = -100.0, max = 100.0;
     double *a = generate_array(size, min, max);
 
