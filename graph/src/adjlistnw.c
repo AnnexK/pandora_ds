@@ -114,11 +114,11 @@ int add_edge(graph *g, size_t s, size_t e, int data)
     if (!edge)
     {
 	listdata key = {e};
-	insert(g->adjlists[s], NULL, &key);
+	insert(g->adjlists[s], last(g->adjlists[s]), &key);
 	if (!g->directed)
 	{
 	    key.v = s;
-	    insert(g->adjlists[e], NULL, &key);
+	    insert(g->adjlists[e], last(g->adjlists[s]), &key);
 	}
     }
     return SUCCESS;
