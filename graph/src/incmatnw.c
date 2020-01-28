@@ -170,6 +170,11 @@ struct _iterator
     size_t esize; // количество ребер
 };
 
+iterator *make_iter(void)
+{
+    return malloc(sizeof(iterator));
+}
+
 size_t get_end(int *edge, size_t l, size_t v)
 {
     for (size_t i = 0; i < l; i++)
@@ -181,15 +186,18 @@ size_t get_end(int *edge, size_t l, size_t v)
     return v;
 }
 
-iterator *make_iter(graph *g, size_t v)
+void set_invalid(iterator *it)
 {
-    if (g->v <= v) return NULL;
+    it->cur = it->esize = 0;
+}
 
-    iterator *it = malloc(sizeof(iterator));
-    if (!it)
+void it_init(iterator *it, graph *g, size_t v)
+{
+    if (!it) return;
+    if (g->v <= v)
     {
-	fprintf(stderr, "could not allocate struct\n");
-	return NULL;
+	set_invalid(it);
+	return;
     }
 
     it->mat = g->mat;
@@ -201,35 +209,30 @@ iterator *make_iter(graph *g, size_t v)
     if (it->mat[v] == 1)
     {
 	it->evert = get_end(it->mat, g->v, v);
-	return it;
     }
     else
     {
-	return it_next(it);
+	it_next(it);
     }
 }
 
-iterator *it_next(iterator *it)
+void it_next(iterator *it)
 {
-    if (!it) return NULL;
+    if (!it_valid(it)) return;
 
-    for (size_t i = it->cur+1; i < it->esize; i++)
+    for (it->cur++; it->cur < it->esize; it->cur++)
     {
-	if (it->mat[i * (it->vsize) + it->svert] == 1)
+	if (it->mat[it->cur * (it->vsize) + it->svert] == 1)
 	{
-	    it->cur = i;
-	    it->evert = get_end(it->mat + i*(it->vsize), it->vsize, it->svert);
-	    return it;
+	    it->evert = get_end(it->mat + it->cur*(it->vsize), it->vsize, it->svert);
+	    return;
 	}
     }
-
-    free(it);
-    return NULL;
 }
 
 size_t it_start(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return it->vsize;
@@ -239,7 +242,7 @@ size_t it_start(iterator *it)
 
 size_t it_end(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return it->vsize;
@@ -249,11 +252,16 @@ size_t it_end(iterator *it)
 
 int it_data(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return no_edge;
     }
 
     return 1;
+}
+
+int it_valid(iterator *it)
+{
+    return it && it->cur < it->esize;
 }

@@ -40,13 +40,16 @@ int fprintg(FILE *fp, graph *g)
 
     write_head(fp, vertices(g), directed(g));
 
+    iterator *it = make_iter();
     for (size_t i = 0; i < vertices(g); i++)
     {
-	for (iterator *it = make_iter(g, i); it; it = it_next(it))
+	for (it_init(it, g, i); it_valid(it); it_next(it))
 	{
 	    write_edge(fp, it_start(it), it_end(it), it_data(it));
 	}
     }
+    
+    free(it);
     return WRITE_SUCCESS;
 }
 

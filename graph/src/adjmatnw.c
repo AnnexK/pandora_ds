@@ -125,14 +125,24 @@ struct _iterator
     size_t cur;
 };
 
-iterator *make_iter(graph *g, size_t v)
+iterator *make_iter(void)
 {
-    if (g->v <= v) return NULL;
-    iterator *it = malloc(sizeof(iterator));
-    if (!it)
+    return malloc(sizeof(iterator));
+}
+
+void set_invalid(iterator *it)
+{
+    if (it)
+	it->size = it->cur = 0;
+}
+
+void it_init(iterator *it, graph *g, size_t v)
+{
+    if (!it) return;
+    if (g->v <= v)
     {
-	fprintf(stderr, "could not allocate struct\n");
-	return NULL;
+	set_invalid(it);
+	return;
     }
 
     it->vert = v;
@@ -140,27 +150,25 @@ iterator *make_iter(graph *g, size_t v)
     it->size = g->v;
     it->cur = 0;
 
-    return *(it->row) != no_edge ? it : it_next(it);
+    if (*(it->row) == no_edge)
+	it_next(it);
 }
 
-iterator *it_next(iterator *it)
+void it_next(iterator *it)
 {
-    if (!it) return NULL;
-    for (size_t i = it->cur+1; i < it->size; i++)
+    if (!it_valid(it)) return;
+    for (it->cur++; it->cur < it->size; it->cur++)
     {
-	if (it->row[i] != no_edge)
+	if (it->row[it->cur] != no_edge)
 	{
-	    it->cur = i;
-	    return it;
+	    return;
 	}
     }
-    free(it);
-    return NULL;
 }
 
 size_t it_start(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return it->size;
@@ -170,7 +178,7 @@ size_t it_start(iterator *it)
 
 size_t it_end(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return it->size;
@@ -180,10 +188,15 @@ size_t it_end(iterator *it)
 
 int it_data(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return no_edge;
     }
     return 1;
+}
+
+int it_valid(iterator *it)
+{
+    return it && it->cur < it->size;
 }

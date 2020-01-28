@@ -7,8 +7,9 @@
 
 int _topsort(graph *g, size_t v, unsigned char *s, size_t *n, size_t *k)
 {
+    iterator *it = make_iter();
     s[v] = 1;
-    for (iterator *it = make_iter(g, v); it; it = it_next(it))
+    for (it_init(it, g, v); it_valid(it); it_next(it))
     {
 	size_t w = it_end(it);
 	/* !s[w] -- вершина не посещена (запустить обход из нее),
@@ -24,6 +25,7 @@ int _topsort(graph *g, size_t v, unsigned char *s, size_t *n, size_t *k)
     }
     (*k)--;
     n[v] = *k;
+    free(it);
     return 0;
 }
 
@@ -89,5 +91,6 @@ int main(int argc, char **argv)
     }
 
     dest_graph(g);
+    free(sorted);
     return 0;
 }

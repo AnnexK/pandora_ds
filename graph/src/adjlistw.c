@@ -165,38 +165,39 @@ struct _iterator
     node *cur;
 };
 
-iterator *make_iter(graph *g, size_t v)
+iterator *make_iter(void)
 {
-    if (g->v <= v) return NULL;
-    // пустой список
-    if (!first(g->adjlists[v])) return NULL;
-    iterator *it = malloc(sizeof(iterator));
-    if (!it)
+    return malloc(sizeof(iterator));
+}
+
+void set_invalid(iterator *it)
+{
+    it->cur = NULL;
+}
+
+void it_init(iterator *it, graph *g, size_t v)
+{
+    if (!it) return;
+    if (g->v <= v)
     {
-	fprintf(stderr, "could not allocate struct\n");
-	return NULL;
+	set_invalid(it);
+	return;
     }
 
     it->vert = v;
     it->cur = first(g->adjlists[v]);
     it->size = g->v;
-    return it;
 }
 
-iterator *it_next(iterator *it)
+void it_next(iterator *it)
 {
+    if (!it_valid(it)) return;
     it->cur = next(it->cur);
-    if (!it->cur)
-    {
-	free(it);
-	return NULL;
-    }
-    return it;
 }
 
 size_t it_start(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return it->size;
@@ -206,7 +207,7 @@ size_t it_start(iterator *it)
 
 size_t it_end(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return it->size;
@@ -217,11 +218,15 @@ size_t it_end(iterator *it)
 
 int it_data(iterator *it)
 {
-    if (!it)
+    if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return no_edge;
     }
-    listdata *d = data(it->cur);
-    return d->weight;
+    return ((listdata *)data(it->cur))->weight;
+}
+
+int it_valid(iterator *it)
+{
+    return it && it->cur != NULL;
 }

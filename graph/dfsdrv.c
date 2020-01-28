@@ -9,7 +9,8 @@ void _dfs(graph *g, size_t v, size_t *visited)
 {
     visited[v] = 1;
     printf("%lu ", v);
-    for (iterator *it = make_iter(g, v); it; it = it_next(it))
+    iterator *it = make_iter();
+    for (it_init(it, g, v); it_valid(it); it_next(it))
     {
 	size_t end = it_end(it);
 	if (!visited[end])
@@ -17,6 +18,7 @@ void _dfs(graph *g, size_t v, size_t *visited)
 	    _dfs(g, end, visited);
 	}
     }
+    free(it);
 }
 
 void dfs(graph *g, size_t v)

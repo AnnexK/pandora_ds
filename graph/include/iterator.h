@@ -17,10 +17,14 @@
 struct _iterator;
 typedef struct _iterator iterator;
 
-iterator *make_iter(graph *, size_t);
+iterator *make_iter(void);
+void it_init(iterator *, graph *, size_t);
+
 size_t it_start(iterator *);
 size_t it_end(iterator *);
 int it_data(iterator *);
-iterator *it_next(iterator *);
+
+void it_next(iterator *);
+int it_valid(iterator *);
 
 #endif

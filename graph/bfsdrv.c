@@ -60,6 +60,7 @@ int qempty(queue *q)
 
 void bfs(graph *g, size_t v)
 {
+    iterator *it = make_iter();
     if (vertices(g) <= v)
     {
 	fprintf(stderr, "no vertex in graph\n");
@@ -77,7 +78,7 @@ void bfs(graph *g, size_t v)
 	size_t w = dequeue(q);
 	/* вывод вершины */
         printf("%lu ", w);
-	for (iterator *it = make_iter(g, w); it; it = it_next(it))
+	for (it_init(it, g, w); it_valid(it); it_next(it))
 	{
 	    size_t y = it_end(it);
 	    if (!visited[y])
@@ -90,6 +91,7 @@ void bfs(graph *g, size_t v)
     dest_queue(q);
     free(visited);
     putchar('\n');
+    free(it);
 }
 
 int main(int argc, char **argv)
