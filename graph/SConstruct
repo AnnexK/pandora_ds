@@ -6,3 +6,4 @@ env.Program('dfs', ['dfsdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'
 env.Program('bfs', ['bfsdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
 env.Program('topsort', ['topsortdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
 env.Program('euler', ['eulerdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
+env.Program('fcs', ['fcsdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
