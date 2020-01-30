@@ -2,9 +2,12 @@ env = Environment(CPPPATH='#include', CCFLAGS='-Wall -g')
 
 env.Program('iotest', ['iotest.c', 'src/iograph.c', 'src/adjlistw.c', 'src/list.c'])
 env.Program('copytest', ['copytest.c', 'src/iograph.c', 'src/incmatnw.c', 'src/list.c'])
+env.Program('transtest', ['transtest.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
+
 env.Program('dfs', ['dfsdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
 env.Program('bfs', ['bfsdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
 env.Program('topsort', ['topsortdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
 env.Program('euler', ['eulerdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
 env.Program('fcs', ['fcsdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
 env.Program('span', ['spandrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
+env.Program('comps', ['ccdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
