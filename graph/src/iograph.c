@@ -24,7 +24,7 @@ void write_edge(FILE *fp, size_t start, size_t end, int data)
     fprintf(fp, edge, start, end, data, '\n');
 }
 
-int fprintg(FILE *fp, graph *g)
+int fwriteg(FILE *fp, graph *g)
 {
     if (!fp)
     {
@@ -45,7 +45,9 @@ int fprintg(FILE *fp, graph *g)
     {
 	for (it_init(it, g, i); it_valid(it); it_next(it))
 	{
-	    write_edge(fp, it_start(it), it_end(it), it_data(it));
+	    size_t end = it_end(it);
+	    if (!directed(g) && end < i) continue;
+	    write_edge(fp, it_start(it), end, it_data(it));
 	}
     }
     
