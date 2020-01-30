@@ -28,4 +28,5 @@ int add_edge(graph *, size_t, size_t, int);
 int get_edge(graph *, size_t, size_t);
 int remove_edge(graph *, size_t, size_t);
 
+void transpose(graph *);
 #endif

@@ -118,6 +118,23 @@ int get_edge(graph *g, size_t s, size_t e)
     return g->mat[s*g->v+e];
 }
 
+void transpose(graph *g)
+{
+    if (directed(g))
+    {
+	size_t v = vertices(g);
+	for (size_t i = 0; i < v-1; i++)
+	{
+	    for (size_t j = i+1; j < v; j++)
+	    {
+		int tmp = g->mat[i*v+j];
+		g->mat[i*v+j] = g->mat[j*v+i];
+		g->mat[j*v+i] = tmp;
+	    }
+	}
+    }
+}
+
 struct _iterator
 {
     size_t vert;
@@ -158,7 +175,7 @@ void it_init(iterator *it, graph *g, size_t v)
 void it_next(iterator *it)
 {
     if (!it_valid(it)) return;
-    for (it->cur++; i < it->size; it->cur++)
+    for (it->cur++; it->cur < it->size; it->cur++)
     {
 	if (it->row[it->cur] != no_edge)
 	{

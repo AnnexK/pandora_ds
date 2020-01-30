@@ -145,6 +145,39 @@ int remove_edge(graph *g, size_t s, size_t e)
     return SUCCESS;
 }
 
+void move_next(graph *g, size_t v)
+{
+    listdata *tmp = data(first(g->adjlists[v]));
+    size_t new_end = tmp->v;
+    tmp->v = v;
+    insert(g->adjlists[new_end], last(g->adjlists[new_end]), tmp);
+    delete(g->adjlists[v], first(g->adjlists[v]));
+}
+
+/* ToDo: добавить операцию append(L1, L2) в список
+   и переписать это */
+void transpose(graph *g)
+{
+    node **ends = malloc(vertices(g) * sizeof(node *));
+    for (size_t i = 0; i < vertices(g); i++)
+    {
+	ends[i] = last(g->adjlists[i]);
+    }
+
+    for (size_t i = 0; i < vertices(g); i++)
+    {
+	if (ends[i]) // список i был не пуст до вставок
+	{
+	    while (first(g->adjlists[i]) != ends[i])
+	    {
+		move_next(g, i);
+	    }
+	    move_next(g, i);
+	}
+    }
+    free(ends);
+}
+
 struct _iterator
 {
     size_t size;

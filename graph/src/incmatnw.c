@@ -160,6 +160,21 @@ int remove_edge(graph *g, size_t s, size_t e)
     return SUCCESS;
 }
 
+void transpose(graph *g)
+{
+    if (directed(g))
+    {
+	size_t v = vertices(g);
+	for (size_t e = 0; e < g->edge_current; e++)
+	{
+	    for (size_t i = 0; i < v; i++)
+	    {
+		g->mat[e*v+i] *= -1;
+	    }
+	}
+    }
+}
+
 struct _iterator
 {
     int *mat; // матрица инцидентности
