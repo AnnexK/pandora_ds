@@ -191,6 +191,27 @@ void transpose(graph *g)
     free(ends);
 }
 
+int *make_adj_mat(graph *g)
+{
+    size_t v = vertices(g);
+    int *ret = malloc(sizeof(int) * v * v);
+
+    for (size_t i = 0; i < v * v; i++)
+    {
+	ret[i] = no_edge;
+    }
+
+    for (size_t i = 0; i < v * v; i++)
+    {
+	for (node *n = first(g->adjlists[i]); n; n = next(n))
+	{
+	    listdata *d = data(n);
+	    ret[i*v+d->v] = d->weight;
+	}
+    }
+    return ret;
+}
+
 struct _iterator
 {
     size_t size;

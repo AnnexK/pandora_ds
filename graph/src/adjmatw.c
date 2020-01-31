@@ -135,6 +135,13 @@ void transpose(graph *g)
     }
 }
 
+int *make_adj_mat(graph *g)
+{
+    int *ret = malloc(sizeof(int) * vertices(g) * vertices(g));
+    memcpy(ret, g->mat, sizeof(int)*vertices(g)*vertices(g));
+    return ret;
+}
+
 struct _iterator
 {
     size_t vert;

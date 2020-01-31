@@ -29,4 +29,6 @@ int get_edge(graph *, size_t, size_t);
 int remove_edge(graph *, size_t, size_t);
 
 void transpose(graph *);
+int *make_adj_mat(graph *);
+
 #endif

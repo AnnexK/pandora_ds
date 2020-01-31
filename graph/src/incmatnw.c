@@ -175,6 +175,38 @@ void transpose(graph *g)
     }
 }
 
+int *make_adj_mat(graph *g)
+{
+    size_t v = vertices(g);
+    int *ret = malloc(sizeof(int) * v * v);
+    for (size_t i = 0; i < v * v; i++)
+    {
+	ret[i] = no_edge;
+    }
+    for (size_t i = 0; i < g->edge_current; i++)
+    {
+	size_t s = v;
+	size_t e = v;
+	for (size_t j = 0; j < v; j++)
+	{
+	    if (g->mat[i*v+j])
+	    {
+		if (s == v)
+		    s = j;
+		else
+		    e = j;
+	    }
+	}
+	/* петля */
+	if (e == v)
+	    e = s;
+	ret[s*v+e] = 1;
+	if (!directed(g))
+	    ret[e*v+s] = 1;
+    }
+    return ret;
+}
+
 struct _iterator
 {
     int *mat; // матрица инцидентности
