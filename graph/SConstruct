@@ -14,3 +14,5 @@ env.Program('comps', ['ccdrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c
 env.Program('tc', ['warshtcdrv.c', 'src/iograph.c', 'src/adjmatnw.c', 'src/list.c'])
 env.Program('bicon', ['bicondrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/list.c'])
 env.Program('prim', ['primdrv.c', 'src/iograph.c', 'src/adjlistw.c', 'src/list.c'])
+env.Program('dijkstra', ['dijkstra.c', 'src/iograph.c', 'src/adjlistw.c', 'src/list.c'])
+env.Program('kruskal', ['kruskal.c', 'src/iograph.c', 'src/adjlistw.c', 'src/list.c'])
