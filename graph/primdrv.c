@@ -8,14 +8,14 @@
 
 graph *prim(graph *g)
 {
-    size_t v = vertices(g);
-    iterator *it = make_iter();
-    
     if (directed(g))
     {
 	fprintf(stderr, "graph is directed\n");
 	return NULL;
     }
+    
+    size_t v = vertices(g);
+    iterator *it = make_iter();
     
     graph *mst = make_graph(v, 0);
     unsigned char *vec = calloc(sizeof(unsigned char), v);
@@ -89,17 +89,19 @@ int main(int argc, char **argv)
     fclose(fp);
 
     graph *mst = prim(g);
-    writeg(mst);
-    iterator *it = make_iter();
-    int sum = 0;
-    for (size_t i = 0; i < vertices(mst); i++)
-	for (it_init(it, mst, i); it_valid(it); it_next(it))
-	    if (it_end(it) < i)
-		sum += it_data(it);
-    printf("MST weight sum = %d\n", sum);
-
-    dest_graph(mst);
+    if (mst)
+    {
+	writeg(mst);
+	iterator *it = make_iter();
+	int sum = 0;
+	for (size_t i = 0; i < vertices(mst); i++)
+	    for (it_init(it, mst, i); it_valid(it); it_next(it))
+		if (it_end(it) < i)
+		    sum += it_data(it);
+	printf("MST weight sum = %d\n", sum);
+	dest_graph(mst);
+	free(it);
+    }
     dest_graph(g);
-    free(it);
     return 0;
 }
