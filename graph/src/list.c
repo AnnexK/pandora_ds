@@ -77,6 +77,7 @@ void *data(node *n)
 
 node *next(node *n)
 {
+    if (!n) return NULL;
     return n->next;
 }
 
@@ -180,4 +181,89 @@ void map(list *l, void (*foo)(node *))
 {
     for (node *n = l->head; n; n=n->next)
 	foo(n);
+}
+
+
+void get_sent_nodes(node *, size_t, node **, node **);
+node *merge(node *, node *, node *, cmpf);
+
+void lsort(list *l, cmpf f)
+{
+    size_t list_size = 0;
+
+    for (node *n = l->head; n; n = n->next)
+	list_size++;
+
+    for (size_t sub_size = 1; sub_size < list_size; sub_size *= 2)
+    {
+	node *left = l->head;
+	node *mid, *right;
+	while (left)
+	{
+	    get_sent_nodes(left, sub_size, &mid, &right);
+	    node *tmp = merge(left, mid, right, f);
+	    if (left == l->head)
+		l->head = tmp;
+	    left = right;
+	}
+    }    
+}
+
+void get_sent_nodes(node *left, size_t ssize, node **mid, node **right)
+{
+    *mid = *right = left;
+
+    for (size_t i = 0; i < ssize; i++)
+    {
+	*mid = next(*mid);
+	*right = next(next(*right));
+    }
+}
+
+node *merge(node *left, node *mid, node *right, cmpf f)
+{
+    static node *prev = NULL;
+    node *first = left;
+    node *second = mid;
+
+    if (!second)
+    {
+	prev = NULL;
+	return left;
+    }
+    node *temp = NULL;
+    node *head = NULL;
+
+    while (first != mid && second != right)
+    {
+	node *min = f(first->data, second->data) < 0 ? first : second;
+	if (min == first)
+	    first = first->next;
+	else
+	    second = second->next;
+	
+	if (!temp)
+	{
+	    temp = min;
+	    head = min;
+	}
+	else
+	{
+	    temp->next = min;
+	    temp = temp->next;
+	}
+    }
+    
+    temp->next = first != mid ? first : second;
+    node *barrier = first != mid ? mid : right;
+
+    while (temp->next != barrier)
+	temp = temp->next;
+    temp->next = right;
+
+    if (prev)
+	prev->next = head;
+
+    prev = right ? temp : right;
+    return head;
 }

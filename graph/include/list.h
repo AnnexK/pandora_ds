@@ -30,5 +30,5 @@ int delete(list *, node *);
 int empty(list *);
 
 void map(list *, void (*)(node *));
-
+void lsort(list *, cmpf);
 #endif
