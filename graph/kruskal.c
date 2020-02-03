@@ -92,8 +92,11 @@ list *get_edges(graph *g)
     {
 	for (it_init(it, g, i); it_valid(it); it_next(it))
 	{
-	    edge ins = {it_start(it), it_end(it), it_data(it)};
-	    insert(l, NULL, &ins);
+	    if (i < it_end(it)) // не добавляем лишние ребра
+	    {
+		edge ins = {it_start(it), it_end(it), it_data(it)};
+		insert(l, NULL, &ins);
+	    }
 	}
     }
 
