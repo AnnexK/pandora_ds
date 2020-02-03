@@ -188,7 +188,7 @@ int *make_adj_mat(graph *g)
 	ret[i] = no_edge;
     }
 
-    for (size_t i = 0; i < v * v; i++)
+    for (size_t i = 0; i < v; i++)
     {
 	for (node *n = first(g->adjlists[i]); n; n = next(n))
 	{
