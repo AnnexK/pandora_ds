@@ -16,3 +16,4 @@ env.Program('bicon', ['bicondrv.c', 'src/iograph.c', 'src/adjlistnw.c', 'src/lis
 env.Program('prim', ['primdrv.c', 'src/iograph.c', 'src/adjlistw.c', 'src/list.c'])
 env.Program('dijkstra', ['dijkstra.c', 'src/iograph.c', 'src/adjlistw.c', 'src/list.c'])
 env.Program('kruskal', ['kruskal.c', 'src/iograph.c', 'src/adjlistw.c', 'src/list.c'])
+env.Program('floyd', ['floyd.c', 'src/iograph.c', 'src/adjlistw.c', 'src/list.c'])
