@@ -78,7 +78,7 @@ int sempty(stack *s)
     return s->head == NULL;
 }
 
-void process_block(size_t s, size_t e, stack *stk, size_t *k, size_t s_ch, size_t *num)
+void process_block(size_t s, size_t e, stack *stk, size_t *k, size_t s_ch, size_t *num, unsigned char *cuts)
 {
     ++(*k);
     printf("found block with edges:\n");
@@ -95,11 +95,11 @@ void process_block(size_t s, size_t e, stack *stk, size_t *k, size_t s_ch, size_
     if (edge_count == 1)
 	printf("<%lu %lu> is a cut edge\n", s, e);
     if (num[s] != 1 || s_ch > 1)
-	printf("v%lu is a cut vertex\n", s);
+	cuts[s] = 1;
     putchar('\n');
 }
 
-void block(graph *g, size_t v, size_t p, size_t *num, size_t *low, stack *s, size_t *k)
+void block(graph *g, size_t v, size_t p, size_t *num, size_t *low, stack *s, size_t *k, unsigned char *cuts)
 {
     static size_t n = 0;
     num[v] = low[v] = ++n;
@@ -114,11 +114,11 @@ void block(graph *g, size_t v, size_t p, size_t *num, size_t *low, stack *s, siz
 	if (!num[w])
 	{
 	    push(s, ins_edge);
-	    block(g, w, v, num, low, s, k);
+	    block(g, w, v, num, low, s, k, cuts);
 	    low[v] = MIN(low[v], low[w]);
 	    if (low[w] == num[v])
 	    {
-	        process_block(v, w, s, k, children, num);
+	        process_block(v, w, s, k, children, num, cuts);
 	    }	   
 	}
 	else
@@ -133,6 +133,15 @@ void block(graph *g, size_t v, size_t p, size_t *num, size_t *low, stack *s, siz
     free(it);
 }
 
+void print_cuts(size_t v, unsigned char *c)
+{
+    printf("cut vertices: ");
+    for (size_t i = 0; i < v; i++)
+	if (c[i])
+	    printf("v%lu ", i);
+    putchar('\n');
+}
+
 size_t bicon(graph *g)
 {
     size_t bcomps = 0;
@@ -141,15 +150,18 @@ size_t bicon(graph *g)
     size_t v = vertices(g);
     size_t *num = calloc(sizeof(size_t), v);
     size_t *low = calloc(sizeof(size_t), v);
-
+    unsigned char *cuts = calloc(sizeof(unsigned char), v);
     for (size_t i = 0; i < v; i++)
     {
 	if (!num[i])
 	{
-	    block(g, i, i, num, low, s, &bcomps);
+	    block(g, i, i, num, low, s, &bcomps, cuts);
 	}
     }
 
+    print_cuts(v, cuts);
+    
+    free(cuts);
     free(num);
     free(low);
     dest_stack(s);
@@ -179,7 +191,7 @@ int main(int argc, char **argv)
     fclose(fp);
 
     size_t bc = bicon(g);
-    printf("total bicon comps: %lu\n", bc);
+    printf("total blocks: %lu\n", bc);
     
     dest_graph(g);
     return 0;
