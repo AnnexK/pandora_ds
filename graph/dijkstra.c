@@ -4,25 +4,25 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
+#include <math.h>
 
-void init_ss(size_t v, size_t s, size_t **p, int **d)
+void init_ss(size_t v, size_t s, size_t **p, double **d)
 {
     *p = malloc(sizeof(size_t) * v);
     *d = malloc(sizeof(int) * v);
     for (size_t i = 0; i < v; i++)
     {
 	(*p)[i] = v;
-	(*d)[i] = INT_MAX;
+	(*d)[i] = INFINITY;
     }
     (*d)[s] = 0;
     (*p)[s] = s;
 }
 
-void relax(graph *g, iterator *it, size_t *p, int *d)
+void relax(iterator *it, size_t *p, double *d)
 {
     size_t s = it_start(it), e = it_end(it);
-    int edgw = it_data(it);
+    double edgw = it_data(it);
     if (d[e] > d[s] + edgw)
     {
 	d[e] = d[s] + edgw;
@@ -30,7 +30,7 @@ void relax(graph *g, iterator *it, size_t *p, int *d)
     }
 }
 
-size_t select_min(int *dists, unsigned char *fixed, size_t v)
+size_t select_min(double *dists, unsigned char *fixed, size_t v)
 {
     size_t min = v;
     for (size_t i = 0; i < v; i++)
@@ -42,26 +42,26 @@ size_t select_min(int *dists, unsigned char *fixed, size_t v)
 typedef struct
 {
     size_t *p;
-    int *d;
+    double *d;
 } result;
 
 result dijkstra(graph *g, size_t start)
 {
     size_t v = vertices(g);
     size_t *parents;
-    int *dists;
+    double *dists;
     unsigned char *fixed = calloc(sizeof(unsigned int), v);
     
     init_ss(v, start, &parents, &dists);
     
     size_t cur;
     iterator *it = make_iter();
-    while ((cur = select_min(dists, fixed, v)) != v && !fixed[cur])
+    while ((cur = select_min(dists, fixed, v)) != v && dists[cur] < INFINITY)
     {
 	fixed[cur] = 1;
 	for (it_init(it, g, cur); it_valid(it); it_next(it))
 	{
-	    relax(g, it, parents, dists);
+	    relax(it, parents, dists);
 	}
     }
     free(it);
@@ -102,14 +102,14 @@ int main(int argc, char **argv)
     } while (s >= vertices(g) && printf("try again\n"));
     
     result res = dijkstra(g, s);
-
+    
     size_t *stk = malloc(sizeof(size_t) * vertices(g));
     size_t stkptr = 0;
     for (size_t i = 0; i < vertices(g); i++)
     {
-	if (i != s && res.d[i] < INT_MAX)
+	if (i != s && res.d[i] < INFINITY)
 	{       
-	    printf("distance from v%lu to v%lu equals %d\n", s, i, res.d[i]);
+	    printf("distance from v%lu to v%lu equals %g\n", s, i, res.d[i]);
 	    for (size_t cur = i; cur != s; cur = res.p[cur])
 		stk[stkptr++] = cur;
 	    printf("path: %lu ", s);
