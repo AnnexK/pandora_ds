@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <math.h>
 
 #include "graph.h"
 #include "iterator.h"
@@ -13,7 +14,7 @@ struct _graph
     size_t v;
     unsigned char directed;
 };
-const int no_edge = 0;
+const double no_edge = INFINITY;
 
 typedef struct _listdata
 {
@@ -102,7 +103,7 @@ unsigned char directed(graph *g)
 }
 
 // data is ignored
-int add_edge(graph *g, size_t s, size_t e, int data)
+int add_edge(graph *g, size_t s, size_t e, double data)
 {
     if (g->v <= s || g->v <= e)
     {
@@ -124,9 +125,9 @@ int add_edge(graph *g, size_t s, size_t e, int data)
     return SUCCESS;
 }
 
-int get_edge(graph *g, size_t s, size_t e)
+double get_edge(graph *g, size_t s, size_t e)
 {
-    return g->v > s && g->v > e && search(g->adjlists[s], &e) ? 1 : no_edge;
+    return g->v > s && g->v > e && search(g->adjlists[s], &e) ? 1.0 : no_edge;
 }
 
 int remove_edge(graph *g, size_t s, size_t e)
@@ -178,10 +179,10 @@ void transpose(graph *g)
     free(ends);
 }
 
-int *make_adj_mat(graph *g)
+double *make_adj_mat(graph *g)
 {
     size_t v = vertices(g);
-    int *ret = malloc(sizeof(int) * v * v);
+    double *ret = malloc(sizeof(double) * v * v);
 
     for (size_t i = 0; i < v * v; i++)
     {
@@ -193,7 +194,7 @@ int *make_adj_mat(graph *g)
 	for (node *n = first(g->adjlists[i]); n; n = next(n))
 	{
 	    listdata *d = data(n);
-	    ret[i*v+d->v] = 1;
+	    ret[i*v+d->v] = 1.0;
 	}
     }
     return ret;
@@ -257,14 +258,14 @@ size_t it_end(iterator *it)
     return d->v;
 }
 
-int it_data(iterator *it)
+double it_data(iterator *it)
 {
     if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return no_edge;
     }
-    return 1;
+    return 1.0;
 }
 
 int it_valid(iterator *it)

@@ -1,27 +1,43 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
-#include <limits.h>
+#include <math.h>
 #include <string.h>
 
 #include "graph.h"
 #include "iterator.h"
 
-
-// (v+1) items in matrix vector
-// to store weight
-
 #define ALLOC_SIZE 100
+/* Как ребро выглядит в памяти:
+
+   |v0|v1|v2|v3|v4|...|vn|edge_weight|
+   |1b|1b|1b|1b|1b|...|1b|8 bytes    |
+   n -- количество вершин в графе
+*/
+
+/* V по unsigned char + double для хранения веса */
+#define EDGE_SIZE(V) ((V)*sizeof(unsigned char)+sizeof(double))
 
 struct _graph
 {
-    int *mat;
+    unsigned char *mat;
     size_t v;
     size_t edge_capacity;
     size_t edge_current;
     unsigned char directed;
 };
-const int no_edge = INT_MAX;
+const double no_edge = INFINITY;
+
+/* утилити функции для работы с матрицей */
+unsigned char *get_mat_edge(unsigned char *mat, size_t v, size_t index)
+{
+    return (unsigned char *)((char *)mat+index*EDGE_SIZE(v));
+}
+
+double *get_mat_edge_data(unsigned char *edge, size_t v)
+{
+    return (double *)((char *)edge+v*sizeof(unsigned char));
+}
 
 graph *make_graph(size_t v_amt, unsigned char dir)
 {
@@ -52,7 +68,7 @@ graph *copy_graph(graph *g)
 	return NULL;
     }
 
-    size_t matsize = g->edge_capacity*(g->v+1)*sizeof(int);
+    size_t matsize = g->edge_capacity*(EDGE_SIZE(g->v));
     ret->mat = (g->mat ? malloc(matsize) : NULL);
     if (g->mat && !ret->mat)
     {
@@ -86,35 +102,33 @@ unsigned char directed(graph *g)
     return g->directed;
 }
 
-int *edge_lookup(graph *g, size_t s, size_t e)
+unsigned char *edge_lookup(graph *g, size_t s, size_t e)
 {
     int type = g->directed && s != e ? -1 : 1;
     for (size_t i = 0; i < g->edge_current; i++)
     {
-	if (g->mat[i*(g->v+1)+s] && g->mat[i*(g->v+1)+e] == type)
-	    return g->mat+i*(g->v+1);
+	unsigned char *edge = get_mat_edge(g->mat, g->v, i);
+	if (edge[s] && edge[e] == type)
+	    return edge;
     }
     return NULL;
 }
 
 // data is weight
-int add_edge(graph *g, size_t s, size_t e, int data)
+int add_edge(graph *g, size_t s, size_t e, double data)
 {
     if (g->v <= s || g->v <= e)
     {
 	fprintf(stderr, "no edge in graph\n");
 	return EDGE_NOT_FOUND;
     }
-    int *needle;
-    if ((needle = edge_lookup(g, s, e)))
-    {
-        needle[g->v] = data;
-    }
-    else
+    unsigned char *edge;
+    if ((edge = edge_lookup(g, s, e)) == NULL)
     {
 	if (g->edge_capacity == g->edge_current)
 	{
-	    int *tmp = realloc(g->mat, (g->edge_current+ALLOC_SIZE)*(g->v+1)*sizeof(int));
+	    size_t new_size = (g->edge_current+ALLOC_SIZE)*EDGE_SIZE(g->v);
+	    unsigned char *tmp = realloc(g->mat, new_size);
 	    if (!tmp)
 	    {
 		fprintf(stderr, "could not reallocate incidence matrix\n");
@@ -124,25 +138,29 @@ int add_edge(graph *g, size_t s, size_t e, int data)
 	    g->mat = tmp;
 	    g->edge_capacity += ALLOC_SIZE;
 	}
+        edge = get_mat_edge(g->mat, g->v, g->edge_current);
+	
 	for (size_t i = 0; i < g->v; i++)
 	{
-	    if (i != s && i != e)
-		g->mat[g->edge_current*(g->v+1)+i] = 0;
+	    edge[i] = 0;
 	}
-
-	g->mat[g->edge_current*(g->v+1)+s] = 1;
+    
 	// s == e -- петля, поэтому на e пишем 1
-	g->mat[g->edge_current*(g->v+1)+e] = g->directed && s != e ? -1 : 1;
-	g->mat[g->edge_current*(g->v+1)+g->v] = data;
-	g->edge_current++;
+	edge[e] = g->directed ? -1 : 1;
+	edge[s] = 1;
     }
+
+    /* пишем в ребро его вес */
+    *get_mat_edge_data(edge, g->v) = data;
+
+    g->edge_current++;
     return SUCCESS;
 }
 
-int get_edge(graph *g, size_t s, size_t e)
+double get_edge(graph *g, size_t s, size_t e)
 {
-    int *edge;
-    return g->v > s && g->v > e && (edge = edge_lookup(g, s, e)) ? edge[g->v] : no_edge;
+    unsigned char *edge = edge_lookup(g, s, e);
+    return g->v > s && g->v > e && edge ? *get_mat_edge_data(edge, g->v) : no_edge;
 }
 
 int remove_edge(graph *g, size_t s, size_t e)
@@ -153,14 +171,15 @@ int remove_edge(graph *g, size_t s, size_t e)
 	return EDGE_NOT_FOUND;
     }
 
-    int *needle = edge_lookup(g, s, e);
+    unsigned char *needle = edge_lookup(g, s, e);
     if (!needle)
 	return EDGE_NOT_FOUND;
 
     /* сниппет ниже выполняет оптимальное удаление ребра,
        но не сохраняет порядок ребер. */
-    
-    memcpy(needle, g->mat+(g->edge_current-1)*(g->v+1), sizeof(int)*(g->v+1));
+
+    unsigned char *last_edge = get_mat_edge(g->mat, g->v, g->edge_current-1);
+    memcpy(needle, last_edge, EDGE_SIZE(g->v));
     /* конец сниппета, да */
     g->edge_current--;
     
@@ -174,29 +193,33 @@ void transpose(graph *g)
 	size_t v = vertices(g);
 	for (size_t e = 0; e < g->edge_current; e++)
 	{
+	    unsigned char *edge = get_mat_edge(g->mat, g->v, e);
 	    for (size_t i = 0; i < v; i++)
 	    {
-		g->mat[e*(v+1)+i] *= -1;
+		edge[i] *= -1;
 	    }
 	}
     }
 }
 
-int *make_adj_mat(graph *g)
+double *make_adj_mat(graph *g)
 {
     size_t v = vertices(g);
-    int *ret = malloc(sizeof(int) * v * v);
+    double *ret = malloc(sizeof(double) * v * v);
     for (size_t i = 0; i < v * v; i++)
     {
 	ret[i] = no_edge;
     }
     for (size_t i = 0; i < g->edge_current; i++)
     {
+	unsigned char *edge = get_mat_edge(g->mat, g->v, i);
 	size_t s = v;
 	size_t e = v;
 	for (size_t j = 0; j < v; j++)
 	{
-	    if (g->mat[i*(v+1)+j])
+	    if (edge[j] == -1)
+		e = j;
+	    else if (edge[j] == 1)
 	    {
 		if (s == v)
 		    s = j;
@@ -207,16 +230,17 @@ int *make_adj_mat(graph *g)
 	/* петля */
 	if (e == v)
 	    e = s;
-	ret[s*v+e] = g->mat[i*(v+1)+v];
+	double d = *get_mat_edge_data(edge, v);
+	ret[s*v+e] = d;
 	if (!directed(g))
-	    ret[e*v+s] = g->mat[i*(v+1)+v];
+	    ret[e*v+s] = d;
     }
     return ret;
 }
 
 struct _iterator
 {
-    int *mat; // матрица инцидентности
+    unsigned char *mat; // матрица инцидентности
     size_t svert; // нач. вершина
     size_t evert; // кон. вершина (задается при вычислении)
     size_t cur; // номер текущего ребра
@@ -229,7 +253,7 @@ iterator *make_iter(void)
     return malloc(sizeof(iterator));
 }
 
-size_t get_end(int *edge, size_t l, size_t v)
+size_t get_end(unsigned char *edge, size_t l, size_t v)
 {
     for (size_t i = 0; i < l; i++)
     {
@@ -273,11 +297,13 @@ void it_next(iterator *it)
 {
     if (!it_valid(it)) return;
 
+    unsigned char *edge;
     for (it->cur++; it->cur < it->esize; it->cur++)
     {
-	if (it->mat[it->cur * (it->vsize+1) + it->svert] == 1)
+	edge = get_mat_edge(it->mat, it->vsize, it->cur);
+	if (edge[it->svert] == 1)
 	{
-	    it->evert = get_end(it->mat + it->cur*(it->vsize+1), it->vsize, it->svert);
+	    it->evert = get_end(edge, it->vsize, it->svert);
 	    return;
 	}
     }
@@ -303,7 +329,7 @@ size_t it_end(iterator *it)
     return it->evert;
 }
 
-int it_data(iterator *it)
+double it_data(iterator *it)
 {
     if (!it_valid(it))
     {
@@ -311,7 +337,8 @@ int it_data(iterator *it)
 	return no_edge;
     }
 
-    return it->mat[it->cur*(it->vsize+1)+it->vsize];
+    unsigned char *edge = get_mat_edge(it->mat, it->vsize, it->cur);
+    return *get_mat_edge_data(edge, it->vsize);
 }
 
 int it_valid(iterator *it)

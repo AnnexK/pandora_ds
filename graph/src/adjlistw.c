@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
-#include <limits.h>
+#include <math.h>
 
 #include "graph.h"
 #include "iterator.h"
@@ -14,12 +14,12 @@ struct _graph
     size_t v;
     unsigned char directed;
 };
-const int no_edge = INT_MAX;
+const double no_edge = INFINITY;
 
 typedef struct _listdata
 {
     size_t v;
-    int weight;
+    double weight;
 } listdata;
 
 int listdatacmp(const void *a, const void *b)
@@ -104,7 +104,7 @@ unsigned char directed(graph *g)
 }
 
 // data is weight
-int add_edge(graph *g, size_t s, size_t e, int d)
+int add_edge(graph *g, size_t s, size_t e, double d)
 {
     if (g->v <= s || g->v <= e)
     {
@@ -136,7 +136,7 @@ int add_edge(graph *g, size_t s, size_t e, int d)
     return SUCCESS;
 }
 
-int get_edge(graph *g, size_t s, size_t e)
+double get_edge(graph *g, size_t s, size_t e)
 {
     node *edge;
     return g->v > s && g->v > e && (edge = search(g->adjlists[s], &e)) ? ((listdata *)data(edge))->weight : no_edge;
@@ -191,10 +191,10 @@ void transpose(graph *g)
     free(ends);
 }
 
-int *make_adj_mat(graph *g)
+double *make_adj_mat(graph *g)
 {
     size_t v = vertices(g);
-    int *ret = malloc(sizeof(int) * v * v);
+    double *ret = malloc(sizeof(double) * v * v);
 
     for (size_t i = 0; i < v * v; i++)
     {
@@ -270,7 +270,7 @@ size_t it_end(iterator *it)
     return d->v;
 }
 
-int it_data(iterator *it)
+double it_data(iterator *it)
 {
     if (!it_valid(it))
     {

@@ -12,14 +12,14 @@
 const char *head = "%lu %hhu%c";
 // форматтер для ребра графа
 // (нач. верш., кон. верш., данные)
-const char *edge = "%lu %lu %d%c";
+const char *edge = "%lu %lu %lf%c";
 
 void write_head(FILE *fp, size_t verts, unsigned char directed)
 {
     fprintf(fp, head, verts, directed, '\n');
 }
 
-void write_edge(FILE *fp, size_t start, size_t end, int data)
+void write_edge(FILE *fp, size_t start, size_t end, double data)
 {
     fprintf(fp, edge, start, end, data, '\n');
 }
@@ -85,7 +85,7 @@ graph *freadg(FILE *fp)
     while (fgets(buf, READ_BUF, fp))
     {
 	size_t s, e;
-	int data;
+	double data;
 	if (sscanf(buf, edge, &s, &e, &data, &term) != 4 || term != '\n')
 	{
 	    fprintf(stderr, "wrong edge format\n");

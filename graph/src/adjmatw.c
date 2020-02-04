@@ -1,22 +1,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
-#include <limits.h>
+#include <math.h>
 #include <string.h>
 
 #include "graph.h"
 #include "iterator.h"
 
-// not INT_MAX -- edge present
-// INT_MAX -- edge not present
-
 struct _graph
 {
-    int *mat;
+    double *mat;
     size_t v;
     unsigned char directed;
 };
-const int no_edge = INT_MAX;
+const double no_edge = INFINITY;
 
 graph *make_graph(size_t v_amt, unsigned char dir)
 {
@@ -27,7 +24,7 @@ graph *make_graph(size_t v_amt, unsigned char dir)
 	return NULL;
     }
 
-    g->mat = malloc(v_amt * v_amt * sizeof(int));
+    g->mat = malloc(v_amt * v_amt * sizeof(double));
     if (!g->mat)
     {
 	fprintf(stderr, "could not allocate matrix\n");
@@ -55,7 +52,7 @@ graph *copy_graph(graph *g)
 	return NULL;
     }
 
-    memcpy(ret->mat, g->mat, vertices(g)*vertices(g)*sizeof(int));
+    memcpy(ret->mat, g->mat, vertices(g)*vertices(g)*sizeof(double));
     return ret;
 }
 
@@ -76,7 +73,7 @@ unsigned char directed(graph *g)
 }
 
 // data is weight
-int add_edge(graph *g, size_t s, size_t e, int data)
+int add_edge(graph *g, size_t s, size_t e, double data)
 {
     if (g->v <= s || g->v <= e)
     {
@@ -108,7 +105,7 @@ int remove_edge(graph *g, size_t s, size_t e)
     return SUCCESS;
 }
 
-int get_edge(graph *g, size_t s, size_t e)
+double get_edge(graph *g, size_t s, size_t e)
 {
     if (g->v <= s || g->v <= e)
     {
@@ -127,7 +124,7 @@ void transpose(graph *g)
 	{
 	    for (size_t j = i+1; j < v; j++)
 	    {
-		int tmp = g->mat[i*v+j];
+		double tmp = g->mat[i*v+j];
 		g->mat[i*v+j] = g->mat[j*v+i];
 		g->mat[j*v+i] = tmp;
 	    }
@@ -135,17 +132,17 @@ void transpose(graph *g)
     }
 }
 
-int *make_adj_mat(graph *g)
+double *make_adj_mat(graph *g)
 {
-    int *ret = malloc(sizeof(int) * vertices(g) * vertices(g));
-    memcpy(ret, g->mat, sizeof(int)*vertices(g)*vertices(g));
+    double *ret = malloc(sizeof(double) * vertices(g) * vertices(g));
+    memcpy(ret, g->mat, sizeof(double)*vertices(g)*vertices(g));
     return ret;
 }
 
 struct _iterator
 {
     size_t vert;
-    int *row;
+    double *row;
     size_t size;
     size_t cur;
 };
@@ -211,7 +208,7 @@ size_t it_end(iterator *it)
     return it->cur;
 }
 
-int it_data(iterator *it)
+double it_data(iterator *it)
 {
     if (!it_valid(it))
     {

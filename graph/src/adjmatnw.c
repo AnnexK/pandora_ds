@@ -1,21 +1,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "graph.h"
 #include "iterator.h"
 #include "list.h"
 
-// 1 -- edge present
-// 0 -- edge not present
-
 struct _graph
 {
-    int *mat;
+    unsigned char *mat;
     size_t v;
     unsigned char directed;
 };
-const int no_edge = 0;
+const double no_edge = INFINITY;
 
 graph *make_graph(size_t v_amt, unsigned char dir)
 {
@@ -26,10 +24,10 @@ graph *make_graph(size_t v_amt, unsigned char dir)
 	return NULL;
     }
 
-    g->mat = malloc(v_amt * v_amt * sizeof(int));
+    g->mat = malloc(v_amt * v_amt * sizeof(unsigned char));
     for (size_t i = 0; i < v_amt*v_amt; i++)
     {
-	g->mat[i] = no_edge;
+	g->mat[i] = 0;
     }
     
     if (!g->mat)
@@ -54,7 +52,7 @@ graph *copy_graph(graph *g)
 	return NULL;
     }
 
-    memcpy(ret->mat, g->mat, vertices(g)*vertices(g)*sizeof(int));
+    memcpy(ret->mat, g->mat, vertices(g)*vertices(g)*sizeof(unsigned char));
     return ret;
 }
 
@@ -75,7 +73,7 @@ unsigned char directed(graph *g)
 }
 
 // data ignored
-int add_edge(graph *g, size_t s, size_t e, int data)
+int add_edge(graph *g, size_t s, size_t e, double data)
 {
     if (g->v <= s || g->v <= e)
     {
@@ -99,22 +97,22 @@ int remove_edge(graph *g, size_t s, size_t e)
 	return EDGE_NOT_FOUND;
     }
 
-    g->mat[s*g->v+e] = no_edge;
+    g->mat[s*g->v+e] = 0;
     if (!g->directed)
     {
-	g->mat[e*g->v+s] = no_edge;
+	g->mat[e*g->v+s] = 0;
     }
     return SUCCESS;
 }
 
-int get_edge(graph *g, size_t s, size_t e)
+double get_edge(graph *g, size_t s, size_t e)
 {
     if (g->v <= s || g->v <= e)
     {
 	return no_edge;
     }
 
-    return g->mat[s*g->v+e];
+    return g->mat[s*g->v+e] ? 1.0 : no_edge;
 }
 
 void transpose(graph *g)
@@ -126,7 +124,7 @@ void transpose(graph *g)
 	{
 	    for (size_t j = i+1; j < v; j++)
 	    {
-		int tmp = g->mat[i*v+j];
+		unsigned char tmp = g->mat[i*v+j];
 		g->mat[i*v+j] = g->mat[j*v+i];
 		g->mat[j*v+i] = tmp;
 	    }
@@ -134,17 +132,19 @@ void transpose(graph *g)
     }
 }
 
-int *make_adj_mat(graph *g)
+double *make_adj_mat(graph *g)
 {
-    int *ret = malloc(sizeof(int) * vertices(g) * vertices(g));
-    memcpy(ret, g->mat, sizeof(int)*vertices(g)*vertices(g));
+    double *ret = malloc(sizeof(double) * vertices(g) * vertices(g));
+    for (size_t i = 0; i < vertices(g) * vertices(g); i++)
+	ret[i] = g->mat[i] ? 1.0 : no_edge;
+    
     return ret;
 }
 
 struct _iterator
 {
     size_t vert;
-    int *row;
+    unsigned char *row;
     size_t size;
     size_t cur;
 };
@@ -174,7 +174,7 @@ void it_init(iterator *it, graph *g, size_t v)
     it->size = g->v;
     it->cur = 0;
 
-    if (*(it->row) == no_edge)
+    if (!it->row[it->cur])
 	it_next(it);
 }
 
@@ -183,7 +183,7 @@ void it_next(iterator *it)
     if (!it_valid(it)) return;
     for (it->cur++; it->cur < it->size; it->cur++)
     {
-	if (it->row[it->cur] != no_edge)
+	if (it->row[it->cur])
 	{
 	    return;
 	}
@@ -210,17 +210,27 @@ size_t it_end(iterator *it)
     return it->cur;
 }
 
-int it_data(iterator *it)
+double it_data(iterator *it)
 {
     if (!it_valid(it))
     {
 	fprintf(stderr, "iterator exhausted\n");
 	return no_edge;
     }
-    return 1;
+    return 1.0;
 }
 
 int it_valid(iterator *it)
 {
     return it && it->cur < it->size;
+}
+
+const unsigned char *warshall_mat(graph *g)
+{
+    size_t v = vertices(g);
+    for (size_t k = 0; k < v; k++)
+	for (size_t i = 0; i < v; i++)
+	    for (size_t j = 0; j < v; j++)
+		g->mat[i*v+j] = g->mat[i*v+j] || (g->mat[i*v+k] && g->mat[k*v+j]);
+    return g->mat;
 }
