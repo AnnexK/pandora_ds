@@ -8,41 +8,28 @@
 
 #define MIN(A, B) ((A) < (B) ? (A) : (B))
 
-int reroute(int *mat, size_t i, size_t k, size_t j, size_t v)
+double *floyd(graph *g)
 {
-    int k_path;
-    if (mat[i*v+k] != no_edge && mat[k*v+j] != no_edge)
-	k_path = mat[i*v+k] + mat[k*v+j];
-    else
-	k_path = no_edge;
-    return k_path == no_edge ? mat[i*v+j] : MIN(mat[i*v+j], k_path);
-}
-
-int *floyd(graph *g)
-{
-    int *mat = make_adj_mat(g);
+    double *mat = make_adj_mat(g);
     size_t v = vertices(g);
     /* обработка наличия/отсутствия петель */
     for (size_t i = 0; i < v; i++)
-	mat[i*v+i] = mat[i*v+i] == no_edge || mat[i*v+i] >= 0 ? 0 : INT_MIN;
+	mat[i*v+i] = 0.0;
     
     for (size_t k = 0; k < v; k++)
 	for (size_t i = 0; i < v; i++)
 	    for (size_t j = 0; j < v; j++)
-		mat[i*v+j] = reroute(mat, i, k, j, v);
+		mat[i*v+j] = MIN(mat[i*v+j], mat[i*v+k]+mat[k*v+j]);
     return mat;
 }
 
-void print_mat(int *mat, size_t d, int width)
+void print_mat(double *mat, size_t d, int width)
 {
     for (size_t i = 0; i < d; i++)
     {
 	for (size_t j = 0; j < d; j++)
 	{
-	    if (mat[i*d+j] != no_edge)
-		printf("%*d", width, mat[i*d+j]);
-	    else		
-		printf("%*s", width, "inf");
+	    printf("%*g", width, mat[i*d+j]);
 	}
 	putchar('\n');
     }	    
@@ -70,7 +57,7 @@ int main(int argc, char **argv)
     }
     fclose(fp);
 
-    int *apsp_mat = floyd(g);
+    double *apsp_mat = floyd(g);
     print_mat(apsp_mat, vertices(g), 8);
     
     free(apsp_mat);

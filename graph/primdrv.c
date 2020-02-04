@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
+#include <math.h>
 
 graph *prim(graph *g)
 {
@@ -18,6 +18,7 @@ graph *prim(graph *g)
     iterator *it = make_iter();
     
     graph *mst = make_graph(v, 0);
+    /* vec -- множество вершин в остове */
     unsigned char *vec = calloc(sizeof(unsigned char), v);
     vec[0] = 1;
     size_t in_graph = 1;
@@ -25,7 +26,7 @@ graph *prim(graph *g)
     while (in_graph < v)
     {
 	size_t s = v, e = v;
-	int min = INT_MAX;
+	double min = INFINITY;
 	for (size_t i = 0; i < v; i++)
 	{
 	    if (vec[i])
@@ -93,12 +94,12 @@ int main(int argc, char **argv)
     {
 	writeg(mst);
 	iterator *it = make_iter();
-	int sum = 0;
+	double sum = 0.0;
 	for (size_t i = 0; i < vertices(mst); i++)
 	    for (it_init(it, mst, i); it_valid(it); it_next(it))
 		if (it_end(it) < i)
 		    sum += it_data(it);
-	printf("MST weight sum = %d\n", sum);
+	printf("MST weight sum = %g\n", sum);
 	dest_graph(mst);
 	free(it);
     }

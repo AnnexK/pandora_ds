@@ -70,17 +70,17 @@ typedef struct
 {
     size_t s;
     size_t e;
-    int w;
+    double w;
 } edge;
 
 int edgecmp(const void *a, const void *b)
 {
-    int edge_a = ((edge *)a)->w, edge_b = ((edge *)b)->w;
+    double edge_a = ((edge *)a)->w, edge_b = ((edge *)b)->w;
     if (edge_a < edge_b)
 	return -1;
-    else if (edge_a == edge_b)
-	return 0;
-    else return 1;
+    else if (edge_a > edge_b)
+	return 1;
+    else return 0;
 }
 
 list *get_edges(graph *g)
@@ -168,12 +168,12 @@ int main(int argc, char **argv)
     {
 	writeg(mst);
 	iterator *it = make_iter();
-	int sum = 0;
+	double sum = 0.0;
 	for (size_t i = 0; i < vertices(mst); i++)
 	    for (it_init(it, mst, i); it_valid(it); it_next(it))
 		if (it_end(it) < i)
 		    sum += it_data(it);
-	printf("MST weight sum = %d\n", sum);
+	printf("MST weight sum = %g\n", sum);
 	dest_graph(mst);
 	free(it);
     }
