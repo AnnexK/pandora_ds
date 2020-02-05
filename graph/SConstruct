@@ -1,4 +1,4 @@
-env = Environment(CPPPATH='#include', CCFLAGS='-Wall -g')
+env = Environment(CPPPATH='#include', CCFLAGS='-Wall -Wextra -g')
 
 ds = 'src/adjlistw.c'
 
