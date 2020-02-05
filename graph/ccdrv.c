@@ -184,7 +184,7 @@ int main(int argc, char **argv)
     size_t *compv = cc(g);
     for (size_t i = 0; i < vertices(g); i++)
     {
-	printf("v%lu is in cc%lu\n", i, compv[i]);
+	printf("v%zu is in cc%zu\n", i, compv[i]);
     }
     free(compv);
 

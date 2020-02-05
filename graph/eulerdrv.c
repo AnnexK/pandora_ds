@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     stack *cycle = euler(g);
     while (!sempty(cycle))
     {
-	printf("%lu ", pop(cycle));
+	printf("%zu ", pop(cycle));
     }
 
     putchar('\n');

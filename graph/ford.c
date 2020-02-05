@@ -94,12 +94,12 @@ int main(int argc, char **argv)
     fclose(fp);
 
     size_t s = vertices(g);
-    printf("Choose starting vertex from 0 to %lu: ", vertices(g)-1);
+    printf("Choose starting vertex from 0 to %zu: ", vertices(g)-1);
     char buf[256];
     do
     {
 	fgets(buf, 256, stdin);
-	sscanf(buf, "%lu", &s);
+	sscanf(buf, "%zu", &s);
     } while (s >= vertices(g) && printf("try again\n"));
     
     result res = ford_bellman(g, s);
@@ -110,12 +110,12 @@ int main(int argc, char **argv)
     {
 	if (i != s && res.d[i] < INFINITY)
 	{       
-	    printf("distance from v%lu to v%lu equals %g\n", s, i, res.d[i]);
+	    printf("distance from v%zu to v%zu equals %lg\n", s, i, res.d[i]);
 	    for (size_t cur = i; cur != s; cur = res.p[cur])
 		stk[stkptr++] = cur;
-	    printf("path: %lu ", s);
+	    printf("path: %zu ", s);
 	    while (stkptr)
-		printf("%lu ", stk[--stkptr]);
+		printf("%zu ", stk[--stkptr]);
 	    putchar('\n');
 	}
     }

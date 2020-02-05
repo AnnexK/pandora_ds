@@ -77,7 +77,7 @@ void bfs(graph *g, size_t v)
     {
 	size_t w = dequeue(q);
 	/* вывод вершины */
-        printf("%lu ", w);
+        printf("%zu ", w);
 	for (it_init(it, g, w); it_valid(it); it_next(it))
 	{
 	    size_t y = it_end(it);

@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void write_mat(const unsigned char *mat, size_t s)
+void write_mat(const int *mat, size_t s)
 {
     for (size_t i = 0; i < s; i++)
     {
 	for (size_t j = 0; j < s; j++)
 	{
-	    printf("%hhu ", mat[i*s+j]);
+	    printf("%d ", mat[i*s+j]);
 	}
 	putchar('\n');
     }
@@ -20,7 +20,7 @@ void write_mat(const unsigned char *mat, size_t s)
 /* определено *ТОЛЬКО* в src/adjmatnw.c
    остальные СД не слинкуются
    модифицирует исходный граф */
-const unsigned char *warshall_mat(graph *);
+const int *warshall_mat(graph *);
 
 int main(int argc, char **argv)
 {
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     fclose(fp);
 
     // возвращает указатель на матрицу *внутри* СД
-    const unsigned char *tc = warshall_mat(g);
+    const int *tc = warshall_mat(g);
     write_mat(tc, vertices(g));
     dest_graph(g);
 

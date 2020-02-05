@@ -29,7 +29,7 @@ void print_mat(double *mat, size_t d, int width)
     {
 	for (size_t j = 0; j < d; j++)
 	{
-	    printf("%*g", width, mat[i*d+j]);
+	    printf("%*lg", width, mat[i*d+j]);
 	}
 	putchar('\n');
     }	    

@@ -8,7 +8,7 @@
 void _dfs(graph *g, size_t v, size_t *visited)
 {
     visited[v] = 1;
-    printf("%lu ", v);
+    printf("%zu ", v);
     iterator *it = make_iter();
     for (it_init(it, g, v); it_valid(it); it_next(it))
     {

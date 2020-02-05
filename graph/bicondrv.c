@@ -88,12 +88,12 @@ void process_block(size_t s, size_t e, stack *stk, size_t *k, size_t s_ch, size_
     {
 	edge_count++;
         edge block_edge = pop(stk);
-	printf("<%lu %lu>\n", block_edge.v, block_edge.w);
+	printf("<%zu %zu>\n", block_edge.v, block_edge.w);
 	sc = block_edge.v; ec = block_edge.w;
     } while (sc != s && ec != e);
 
     if (edge_count == 1)
-	printf("<%lu %lu> is a cut edge\n", s, e);
+	printf("<%zu %zu> is a cut edge\n", s, e);
     if (num[s] != 1 || s_ch > 1)
 	cuts[s] = 1;
     putchar('\n');
@@ -138,7 +138,7 @@ void print_cuts(size_t v, unsigned char *c)
     printf("cut vertices: ");
     for (size_t i = 0; i < v; i++)
 	if (c[i])
-	    printf("v%lu ", i);
+	    printf("v%zu ", i);
     putchar('\n');
 }
 
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
     fclose(fp);
 
     size_t bc = bicon(g);
-    printf("total blocks: %lu\n", bc);
+    printf("total blocks: %zu\n", bc);
     
     dest_graph(g);
     return 0;

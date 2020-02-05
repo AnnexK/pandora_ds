@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     {
 	for (size_t i = 0; i < vertices(g); i++)
 	{
-	    printf("v%lu is #%lu\n", i, sorted[i]);
+	    printf("v%zu is #%zu\n", i, sorted[i]);
 	}
     }
 

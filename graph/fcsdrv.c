@@ -21,12 +21,12 @@ void cycle(graph *g, size_t v, size_t *num, size_t *m, size_t *s, size_t *i)
 	else if ( m[end] < m[v] && end != s[*i-2] )
 	{
 	    size_t j;
-	    printf("cycle found:\n%lu ", end);
+	    printf("cycle found:\n%zu ", end);
 	    for (j = *i-1; s[j] != end; j--)
 	    {
-		printf("%lu ", s[j]);
+		printf("%zu ", s[j]);
 	    }
-	    printf("%lu\n", s[j]);
+	    printf("%zu\n", s[j]);
 	}
     }
     (*i)--;

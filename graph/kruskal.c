@@ -141,6 +141,7 @@ graph *kruskal(graph *g)
     dest_list(edges);
     return mst;
 }
+
 int main(int argc, char **argv)
 {
     if (argc != 2)
@@ -173,7 +174,7 @@ int main(int argc, char **argv)
 	    for (it_init(it, mst, i); it_valid(it); it_next(it))
 		if (it_end(it) < i)
 		    sum += it_data(it);
-	printf("MST weight sum = %g\n", sum);
+	printf("MST weight sum = %lg\n", sum);
 	dest_graph(mst);
 	free(it);
     }
