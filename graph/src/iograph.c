@@ -9,10 +9,10 @@
 
 // форматтер для заголовка файла
 // (кол-во вершин и ориентированность графа)
-const char *head = "%lu %hhu%c";
+const char *head = "%zu %hhu%c";
 // форматтер для ребра графа
 // (нач. верш., кон. верш., данные)
-const char *edge = "%lu %lu %lf%c";
+const char *edge = "%zu %zu %lg%c";
 
 void write_head(FILE *fp, size_t verts, unsigned char directed)
 {
