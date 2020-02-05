@@ -11,11 +11,11 @@ struct _graph
 {
     double *mat;
     size_t v;
-    unsigned char directed;
+    int directed;
 };
 const double no_edge = INFINITY;
 
-graph *make_graph(size_t v_amt, unsigned char dir)
+graph *make_graph(size_t v_amt, int dir)
 {
     graph *g = malloc(sizeof(graph));
     if (!g)
@@ -67,7 +67,7 @@ size_t vertices(graph *g)
     return g->v;
 }
 
-unsigned char directed(graph *g)
+int directed(graph *g)
 {
     return g->directed;
 }

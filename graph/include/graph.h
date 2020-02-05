@@ -16,12 +16,12 @@ typedef struct _graph graph;
 // как INFINITY
 extern const double no_edge;
 
-graph *make_graph(size_t, unsigned char);
+graph *make_graph(size_t, int);
 graph *copy_graph(graph *);
 void dest_graph(graph *);
 
 size_t vertices(graph *);
-unsigned char directed(graph *);
+int directed(graph *);
 
 int add_edge(graph *, size_t, size_t, double);
 double get_edge(graph *, size_t, size_t);

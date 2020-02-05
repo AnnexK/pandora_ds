@@ -11,15 +11,15 @@
 
 struct _graph
 {
-    unsigned char *mat;
+    int *mat;
     size_t v;
     size_t edge_capacity;
     size_t edge_current;
-    unsigned char directed;
+    int directed;
 };
 const double no_edge = INFINITY;
 
-graph *make_graph(size_t v_amt, unsigned char dir)
+graph *make_graph(size_t v_amt, int dir)
 {
     graph *g = malloc(sizeof(graph));
     if (!g)
@@ -47,7 +47,7 @@ graph *copy_graph(graph *g)
 	return NULL;
     }
 
-    size_t matsize = g->edge_capacity*g->v*sizeof(unsigned char);
+    size_t matsize = g->edge_capacity*g->v*sizeof(int);
     ret->mat = (g->mat ? malloc(matsize) : NULL);
     if (g->mat && !ret->mat)
     {
@@ -76,12 +76,12 @@ size_t vertices(graph *g)
     return g->v;
 }
 
-unsigned char directed(graph *g)
+int directed(graph *g)
 {
     return g->directed;
 }
 
-unsigned char *edge_lookup(graph *g, size_t s, size_t e)
+int *edge_lookup(graph *g, size_t s, size_t e)
 {
     int type = g->directed && s != e ? -1 : 1;
     for (size_t i = 0; i < g->edge_current; i++)
@@ -105,7 +105,7 @@ int add_edge(graph *g, size_t s, size_t e, double data)
     {
 	if (g->edge_capacity == g->edge_current)
 	{
-	    unsigned char *tmp = realloc(g->mat, (g->edge_current+ALLOC_SIZE)*(g->v)*sizeof(unsigned char));
+	    int *tmp = realloc(g->mat, (g->edge_current+ALLOC_SIZE)*(g->v)*sizeof(int));
 	    if (!tmp)
 	    {
 		fprintf(stderr, "could not reallocate incidence matrix\n");
@@ -142,14 +142,14 @@ int remove_edge(graph *g, size_t s, size_t e)
 	return EDGE_NOT_FOUND;
     }
 
-    unsigned char *needle = edge_lookup(g, s, e);
+    int *needle = edge_lookup(g, s, e);
     if (!needle)
 	return EDGE_NOT_FOUND;
 
     /* сниппет ниже выполняет оптимальное удаление ребра,
        но не сохраняет порядок ребер. */
     
-    memcpy(needle, g->mat+(g->edge_current-1)*(g->v), sizeof(unsigned char)*(g->v));
+    memcpy(needle, g->mat+(g->edge_current-1)*(g->v), sizeof(int)*(g->v));
     /* конец сниппета, да */
     g->edge_current--;
     
@@ -205,7 +205,7 @@ double *make_adj_mat(graph *g)
 
 struct _iterator
 {
-    unsigned char *mat; // матрица инцидентности
+    int *mat; // матрица инцидентности
     size_t svert; // нач. вершина
     size_t evert; // кон. вершина (задается при вычислении it_next)
     size_t cur; // номер текущего ребра
@@ -218,7 +218,7 @@ iterator *make_iter(void)
     return malloc(sizeof(iterator));
 }
 
-size_t get_end(unsigned char *edge, size_t l, size_t v)
+size_t get_end(int *edge, size_t l, size_t v)
 {
     for (size_t i = 0; i < l; i++)
     {

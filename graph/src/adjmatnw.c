@@ -9,13 +9,13 @@
 
 struct _graph
 {
-    unsigned char *mat;
+    int *mat;
     size_t v;
-    unsigned char directed;
+    int directed;
 };
 const double no_edge = INFINITY;
 
-graph *make_graph(size_t v_amt, unsigned char dir)
+graph *make_graph(size_t v_amt, int dir)
 {
     graph *g = malloc(sizeof(graph));
     if (!g)
@@ -24,7 +24,7 @@ graph *make_graph(size_t v_amt, unsigned char dir)
 	return NULL;
     }
 
-    g->mat = malloc(v_amt * v_amt * sizeof(unsigned char));
+    g->mat = malloc(v_amt * v_amt * sizeof(int));
     for (size_t i = 0; i < v_amt*v_amt; i++)
     {
 	g->mat[i] = 0;
@@ -52,7 +52,7 @@ graph *copy_graph(graph *g)
 	return NULL;
     }
 
-    memcpy(ret->mat, g->mat, vertices(g)*vertices(g)*sizeof(unsigned char));
+    memcpy(ret->mat, g->mat, vertices(g)*vertices(g)*sizeof(int));
     return ret;
 }
 
@@ -67,7 +67,7 @@ size_t vertices(graph *g)
     return g->v;
 }
 
-unsigned char directed(graph *g)
+int directed(graph *g)
 {
     return g->directed;
 }
@@ -124,7 +124,7 @@ void transpose(graph *g)
 	{
 	    for (size_t j = i+1; j < v; j++)
 	    {
-		unsigned char tmp = g->mat[i*v+j];
+		int tmp = g->mat[i*v+j];
 		g->mat[i*v+j] = g->mat[j*v+i];
 		g->mat[j*v+i] = tmp;
 	    }
@@ -144,7 +144,7 @@ double *make_adj_mat(graph *g)
 struct _iterator
 {
     size_t vert;
-    unsigned char *row;
+    int *row;
     size_t size;
     size_t cur;
 };
@@ -225,7 +225,7 @@ int it_valid(iterator *it)
     return it && it->cur < it->size;
 }
 
-const unsigned char *warshall_mat(graph *g)
+const int *warshall_mat(graph *g)
 {
     size_t v = vertices(g);
     for (size_t k = 0; k < v; k++)
