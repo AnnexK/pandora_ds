@@ -7,21 +7,14 @@
 
 #define READ_BUF 256
 
-// форматтер для заголовка файла
-// (кол-во вершин и ориентированность графа)
-const char *head = "%zu %d%c";
-// форматтер для ребра графа
-// (нач. верш., кон. верш., данные)
-const char *edge = "%zu %zu %lg%c";
-
 void write_head(FILE *fp, size_t verts, int directed)
 {
-    fprintf(fp, head, verts, directed, '\n');
+    fprintf(fp, "%zu %d\n", verts, directed);
 }
 
 void write_edge(FILE *fp, size_t start, size_t end, double data)
 {
-    fprintf(fp, edge, start, end, data, '\n');
+    fprintf(fp, "%zu %zu %g\n", start, end, data);
 }
 
 int fwriteg(FILE *fp, graph *g)
@@ -74,7 +67,7 @@ graph *freadg(FILE *fp)
     // проверка на newline
     char term;
     
-    if (sscanf(buf, head, &verts, &directed, &term) != 3 || term != '\n')
+    if (sscanf(buf, "%zu %d%c", &verts, &directed, &term) != 3 || term != '\n')
     {
 	fprintf(stderr, "wrong head format\n");
 	return NULL;
@@ -86,7 +79,7 @@ graph *freadg(FILE *fp)
     {
 	size_t s, e;
 	double data;
-	if (sscanf(buf, edge, &s, &e, &data, &term) != 4 || term != '\n')
+	if (sscanf(buf, "%zu %zu %lg%c", &s, &e, &data, &term) != 4 || term != '\n')
 	{
 	    fprintf(stderr, "wrong edge format\n");
 	    goto err_cleanup;

@@ -110,7 +110,7 @@ int main(int argc, char **argv)
     {
 	if (i != s && res.d[i] < INFINITY)
 	{       
-	    printf("distance from v%zu to v%zu equals %lg\n", s, i, res.d[i]);
+	    printf("distance from v%zu to v%zu equals %g\n", s, i, res.d[i]);
 	    for (size_t cur = i; cur != s; cur = res.p[cur])
 		stk[stkptr++] = cur;
 	    printf("path: %zu ", s);

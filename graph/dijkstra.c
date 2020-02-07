@@ -9,7 +9,7 @@
 void init_ss(size_t v, size_t s, size_t **p, double **d)
 {
     *p = malloc(sizeof(size_t) * v);
-    *d = malloc(sizeof(int) * v);
+    *d = malloc(sizeof(double) * v);
     for (size_t i = 0; i < v; i++)
     {
 	(*p)[i] = v;
@@ -50,7 +50,7 @@ result dijkstra(graph *g, size_t start)
     size_t v = vertices(g);
     size_t *parents;
     double *dists;
-    unsigned char *fixed = calloc(sizeof(unsigned int), v);
+    unsigned char *fixed = calloc(sizeof(unsigned char), v);
     
     init_ss(v, start, &parents, &dists);
     
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
     {
 	if (i != s && res.d[i] < INFINITY)
 	{       
-	    printf("distance from v%zu to v%zu equals %lg\n", s, i, res.d[i]);
+	    printf("distance from v%zu to v%zu equals %g\n", s, i, res.d[i]);
 	    for (size_t cur = i; cur != s; cur = res.p[cur])
 		stk[stkptr++] = cur;
 	    printf("path: %zu ", s);
