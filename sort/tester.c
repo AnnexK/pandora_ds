@@ -15,11 +15,11 @@ int main(int argc, char **argv)
     }
 
     double cur;
-    fscanf(fp, "%lf", &cur);
+    fscanf(fp, "%lg", &cur);
     double buf;
     int fail = 0;
 
-    while (fscanf(fp, "%lf", &buf) != EOF && !fail)
+    while (fscanf(fp, "%lg", &buf) != EOF && !fail)
     {
 	if (buf < cur)
 	{

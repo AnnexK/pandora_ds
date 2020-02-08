@@ -7,7 +7,7 @@ void writeFile(FILE *fp, double *arr, size_t amt)
 {
     for (int i = 0; i < amt; ++i)
     {
-	fprintf(fp, "%lf ", arr[i]);	
+	fprintf(fp, "%g ", arr[i]);	
     }
     fprintf(fp, "\n");
 }
@@ -41,7 +41,7 @@ int main(void)
     double *arr = malloc(size * sizeof(double));
     for (int i = 0; i < size; ++i)
     {
-	fscanf(fp, "%lf", arr + i);
+	fscanf(fp, "%lg", arr + i);
     }
 
     fclose(fp);

@@ -28,7 +28,7 @@ int main(void)
     printf("Original array:\n");
     for (size_t i = 0; i < size; i++)
     {
-	printf("%lf\n", a[i]);
+	printf("%g\n", a[i]);
     }
     putchar('\n');
 
@@ -37,7 +37,7 @@ int main(void)
     printf("Sorted array:\n");
     for (size_t i = 0; i < size; i++)
     {
-	printf("%lf\n", a[i]);
+	printf("%g\n", a[i]);
     }
     putchar('\n');
 
