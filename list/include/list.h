@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#define MEM_ERROR 1
+#define INSERT_FAIL 1
 #define SUCCESS 0
 #define NODE_NOT_IN_LIST 2
 
