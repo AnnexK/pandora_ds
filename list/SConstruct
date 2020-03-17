@@ -1,3 +1,4 @@
 env = Environment(CPPFLAGS='-g -Wall', CPPPATH='#include')
 
-env.Program('slist', ['driver.c', 'src/single.c'])
+env.Program('ptrsl', ['driver.c', 'src/single.c'])
+env.Program('arrsl', ['driver.c', 'src/array_sll.c'])
