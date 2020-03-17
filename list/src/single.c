@@ -102,7 +102,7 @@ int insert(list *l, node *n, const void *d)
     if (!new)
     {
 	fprintf(stderr, "could not allocate node\n");
-	return MEM_ERROR;
+	return INSERT_FAIL;
     }
 
     memcpy(new->data, d, l->ssize);
